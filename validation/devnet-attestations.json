@@ -1,0 +1,178 @@
+[
+  {
+    "test": "test1-fidelity",
+    "attestationAddress": "2rZtaodEawm6YWrJpM3Gf6W5KKAyYw6C5dZQBLgkgir5",
+    "credential": "BAT7k3KyNovYKkPFU6hTrRG6dSRvsagEPHNwXPEkfFpQ",
+    "schema": "AFRdxYq4A2p7UpFwb338qxcF886q5CNUKjSgdxxRxfAJ",
+    "schemaVersion": 1,
+    "programId": "0b964ddeda3888da6774b9f166c61447712a54d5eee97f7e87b79e539fcda591",
+    "publishSignature": "4E49z6b5dRcvceM9RrvVbmvBLsbj3gtbxwp9VszTKfhLayVHwW5hEi5qyAWndcgYDh4cRwaUmsSoCJVPCbvGGBYw",
+    "fields": {
+      "programId": "0b964ddeda3888da6774b9f166c61447712a54d5eee97f7e87b79e539fcda591",
+      "binaryHash": "dc441913904566db6f0ef013d259656ee1ccdf9bf6af04c7f74b90364693b5b6",
+      "sourceCommit": "test1-original",
+      "verificationStatus": "Verified",
+      "verificationTimestamp": "1786156819"
+    }
+  },
+  {
+    "test": "test1-fidelity",
+    "attestationAddress": "2rZtaodEawm6YWrJpM3Gf6W5KKAyYw6C5dZQBLgkgir5",
+    "credential": "BAT7k3KyNovYKkPFU6hTrRG6dSRvsagEPHNwXPEkfFpQ",
+    "schema": "AFRdxYq4A2p7UpFwb338qxcF886q5CNUKjSgdxxRxfAJ",
+    "schemaVersion": 1,
+    "programId": "0b964ddeda3888da6774b9f166c61447712a54d5eee97f7e87b79e539fcda591",
+    "publishSignature": "FWRhhdahq8zsVnFUzoBfhfSQ5QGrf56kh8b84vkVBk7mUCTuaEaNJmM9RrrAmyHHS3Bwc4GKNty4EL2CbemmhMY",
+    "fields": {
+      "programId": "0b964ddeda3888da6774b9f166c61447712a54d5eee97f7e87b79e539fcda591",
+      "binaryHash": "dc441913904566db6f0ef013d259656ee1ccdf9bf6af04c7f74b90364693b5b6",
+      "sourceCommit": "test1-republished",
+      "verificationStatus": "Verified",
+      "verificationTimestamp": "1786156824"
+    }
+  },
+  {
+    "test": "test2-multi-issuer",
+    "attestationAddress": "DMEZGQiD4cdWmWUZKGF5gxQvaiUc2r3KaLa1ViTTnMyD",
+    "credential": "BAT7k3KyNovYKkPFU6hTrRG6dSRvsagEPHNwXPEkfFpQ",
+    "schema": "AFRdxYq4A2p7UpFwb338qxcF886q5CNUKjSgdxxRxfAJ",
+    "schemaVersion": 1,
+    "programId": "a50456a3946f56aaed28c4ccbd6799f5dd3f5f08ad2b3403d88072f3ccd59eb6",
+    "publishSignature": "34SkYynE9nBnovkJ6k99ckWFevjCRxBE9uU7Nm68qXsXWjHeBcXkWCZh5hfPXpMc5635jxbcYuTfxKjszXK5CDEm",
+    "fields": {
+      "programId": "a50456a3946f56aaed28c4ccbd6799f5dd3f5f08ad2b3403d88072f3ccd59eb6",
+      "binaryHash": "e61b939f6aa1129b5dc844079d31a64951b3efb55a7f3d102a9e455583e5eeb7",
+      "sourceCommit": "issuer-a-commit",
+      "verificationStatus": "Verified",
+      "verificationTimestamp": "1786156827"
+    }
+  },
+  {
+    "test": "test2-multi-issuer",
+    "attestationAddress": "7CYRavruLwaApu5m3ShjBfhnN28RM3hqUJ8S5q3TGPyx",
+    "credential": "FDHLsvtnA9VSYoeQab7fr8U6VGLEgpwNeC69bL3RaHc5",
+    "schema": "4SCtyzB5pSzG7SfVtE87GEhbW2n63NMmN3hNnMWdHHXv",
+    "schemaVersion": 1,
+    "programId": "a50456a3946f56aaed28c4ccbd6799f5dd3f5f08ad2b3403d88072f3ccd59eb6",
+    "publishSignature": "4RzZ2x1CzodgqroU5JiDvN2dvkBjoh1HJrb9hVNnAJRkm3ERHgCbBEFhwpaR9MjjPQgLp33KD8SwaHPJzZh2ySPy",
+    "fields": {
+      "programId": "a50456a3946f56aaed28c4ccbd6799f5dd3f5f08ad2b3403d88072f3ccd59eb6",
+      "binaryHash": "e12c5d7e785f7d2d6f674a415ec5cccb16ec9854da4574bb5cdbae9d5952f3f1",
+      "sourceCommit": "issuer-b-commit",
+      "verificationStatus": "Mismatch",
+      "verificationTimestamp": "1786156827"
+    }
+  },
+  {
+    "test": "test3-memcmp",
+    "attestationAddress": "J2Eyij9QDpChcnGwydh75GfweCuLy7dzVzVz56DHQRwE",
+    "credential": "BAT7k3KyNovYKkPFU6hTrRG6dSRvsagEPHNwXPEkfFpQ",
+    "schema": "AFRdxYq4A2p7UpFwb338qxcF886q5CNUKjSgdxxRxfAJ",
+    "schemaVersion": 1,
+    "programId": "0447b31f804ea8c477b7e2816badbda19d89e5132cb793c75a1476da00efee4f",
+    "publishSignature": "2nyJo1HixKHaL88mmKZxhzTVp3XUQ9HGAgjGNpPKcPCtVSafhSMoYASnAxtjca12u1RVABDtPSKeeL2JYbQCvpzi",
+    "fields": {
+      "programId": "0447b31f804ea8c477b7e2816badbda19d89e5132cb793c75a1476da00efee4f",
+      "binaryHash": "c9b4330ad145c3f83248c189995c3c6f19e61c278481a3bc491f127ece98d741",
+      "sourceCommit": "test3-commit",
+      "verificationStatus": "Verified",
+      "verificationTimestamp": "1786156831"
+    }
+  },
+  {
+    "test": "test3-memcmp",
+    "attestationAddress": "4oqkRQFyCH5PXez8ow6sQWi8Arqn6iAN4BhxkuwQF9CY",
+    "credential": "BAT7k3KyNovYKkPFU6hTrRG6dSRvsagEPHNwXPEkfFpQ",
+    "schema": "AFRdxYq4A2p7UpFwb338qxcF886q5CNUKjSgdxxRxfAJ",
+    "schemaVersion": 1,
+    "programId": "711af97df8d2f49cc85079fc43be05bfb917cb89a5791f421b03e96d700d07e0",
+    "publishSignature": "5FywoyqMNJGVxteYiD4dsNRFN5kqQyV3ARZz73sBUoUHpcGNhb7jj9gdXmtGjy51LbV28Z3xQxRcECuXJcmxQ5Wa",
+    "fields": {
+      "programId": "711af97df8d2f49cc85079fc43be05bfb917cb89a5791f421b03e96d700d07e0",
+      "binaryHash": "b62b60ca3ea17f845fa148157c74244e341730474e0821e3f058347385b7f0c1",
+      "sourceCommit": "test3-commit",
+      "verificationStatus": "Verified",
+      "verificationTimestamp": "1786156833"
+    }
+  },
+  {
+    "test": "test3-memcmp",
+    "attestationAddress": "EuDdfFQ8KitHPtbgEwnauf32jjqEekVzHCPz8kSKJoBG",
+    "credential": "BAT7k3KyNovYKkPFU6hTrRG6dSRvsagEPHNwXPEkfFpQ",
+    "schema": "AFRdxYq4A2p7UpFwb338qxcF886q5CNUKjSgdxxRxfAJ",
+    "schemaVersion": 1,
+    "programId": "aefee34c02d75d9ccc3900af2b57357f203f7163b80a6a993d0f53d36e87e824",
+    "publishSignature": "3HnovggGKwmjemLwd3Q26GSHRvDQb2f5HrPvcTzqzfcMn46g5p5Rdh9KeRP5iptCTLKLdG5F75RJ63KosfWKxpYK",
+    "fields": {
+      "programId": "aefee34c02d75d9ccc3900af2b57357f203f7163b80a6a993d0f53d36e87e824",
+      "binaryHash": "c6e296b83d87d165e08a03752a12ebd67dbcf3b0ee1be56036aace7f7ff73caa",
+      "sourceCommit": "test3-commit",
+      "verificationStatus": "Verified",
+      "verificationTimestamp": "1786156835"
+    }
+  },
+  {
+    "test": "test4-roundtrip",
+    "attestationAddress": "9oAMTs3wvEUD9qRiLLUQH1jg824KLLjgQNVe65ofK5E",
+    "credential": "BAT7k3KyNovYKkPFU6hTrRG6dSRvsagEPHNwXPEkfFpQ",
+    "schema": "AFRdxYq4A2p7UpFwb338qxcF886q5CNUKjSgdxxRxfAJ",
+    "schemaVersion": 1,
+    "programId": "b5098d602a88d419422b05015326435083a8138a3347b87782b9e2f546f4809a",
+    "publishSignature": "4HJ4HCrqFfT2LFKEWH3uoSzNpaaSPfbhPSU81kk449wP4nt8fV7rgq8nPjwnsYawjLLYXToKeyzTptVhr7LB5bco",
+    "fields": {
+      "programId": "b5098d602a88d419422b05015326435083a8138a3347b87782b9e2f546f4809a",
+      "binaryHash": "256b8503b1209a5e71608a7357d5cc72abdf5177d8797845c2bd0f8b0630b0c3",
+      "sourceCommit": "test4-roundtrip-commit",
+      "verificationStatus": "Unknown",
+      "verificationTimestamp": "1786156837"
+    }
+  },
+  {
+    "test": "test5-cross-validation",
+    "attestationAddress": "65ER8GRWwCw9axHGq1CmdFeGMrGzc189i1mQjkH76zK6",
+    "credential": "BAT7k3KyNovYKkPFU6hTrRG6dSRvsagEPHNwXPEkfFpQ",
+    "schema": "AFRdxYq4A2p7UpFwb338qxcF886q5CNUKjSgdxxRxfAJ",
+    "schemaVersion": 1,
+    "programId": "06ddf6e1d765a193d9cbe146ceeb79ac1cb485ed5f5b37913a8cf5857eff00a9",
+    "publishSignature": "4AdfnVcHPUmwv8RrG3FmAX7mnxjs9qcVmwFmfCVPTBSYzZnQw8H5mSiMnaaYK6Uj22ZzXRetP9frz7eZurd44uZH",
+    "fields": {
+      "programId": "06ddf6e1d765a193d9cbe146ceeb79ac1cb485ed5f5b37913a8cf5857eff00a9",
+      "binaryHash": "5b31219b7bc4060b1638b933be5f50df3400109acfef12408a196d57ad119748",
+      "sourceCommit": "dbd89438108fda6ac40866d1ccfbb85f2e7436d4",
+      "verificationStatus": "Verified",
+      "verificationTimestamp": "1786156842"
+    }
+  },
+  {
+    "test": "test6-schema-version",
+    "attestationAddress": "BvFeyqqmH5pGKbxDNT6CBFE7ZGqJ847t9ik8csDr1Mhv",
+    "credential": "BAT7k3KyNovYKkPFU6hTrRG6dSRvsagEPHNwXPEkfFpQ",
+    "schema": "AFRdxYq4A2p7UpFwb338qxcF886q5CNUKjSgdxxRxfAJ",
+    "schemaVersion": 1,
+    "programId": "89162414564ed25d1aa87eb2011a5b3dfdf9c7238dd6736d654b12eadf759c10",
+    "publishSignature": "4PWXwmpD1EsxVy7DBYaD1rcCQ6b9J8yNNcHRQrPtEgkaxqJabc9UcSjKNXRmqR9g2UggzQ1ncXxbF6pS8q2CRggY",
+    "fields": {
+      "programId": "89162414564ed25d1aa87eb2011a5b3dfdf9c7238dd6736d654b12eadf759c10",
+      "binaryHash": "4927dbfafbde3a810f016edeb66ed2ab4ca84d556501dbf3e15905f4a02ee038",
+      "sourceCommit": "test6-v1-commit",
+      "verificationStatus": "Verified",
+      "verificationTimestamp": "1786156848"
+    }
+  },
+  {
+    "test": "test6-schema-version",
+    "attestationAddress": "CDCwsibkw3EYuLo4RnEMHduC4sh4biyoXR4RbfTY2QGJ",
+    "credential": "BAT7k3KyNovYKkPFU6hTrRG6dSRvsagEPHNwXPEkfFpQ",
+    "schema": "EpyH8ptQjh7obBBg1s4ZaKcx25LidfjkhFiiHuj73ASN",
+    "schemaVersion": 2,
+    "programId": "fadeef5a149f032ca7d3d9ac663827ea3b0191ab290a7dd4bff89ff25f7b1f04",
+    "publishSignature": "DUzcsNKM9C5EPogPrUTvboBKo1v9NW5jeeT581gUaK3djpQX8K2uUTRBriM6QM6GB8EBMVrYqGLZ89R6UEEA6jw",
+    "fields": {
+      "programId": "fadeef5a149f032ca7d3d9ac663827ea3b0191ab290a7dd4bff89ff25f7b1f04",
+      "binaryHash": "51cba5843b685db93d3e693b225c0f10ce5f9369292036e5d492561f38ccf9ef",
+      "sourceCommit": "test6-v2-commit",
+      "verificationStatus": "Mismatch",
+      "verificationTimestamp": "1786156848"
+    }
+  }
+]
