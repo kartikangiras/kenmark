@@ -1,0 +1,32 @@
+{
+  "name": "kenmark",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "tsc -b packages/errors packages/core && npm run build --workspace @kenmark/web",
+    "lint": "eslint . && npm run lint --workspace @kenmark/web",
+    "test": "npm run test:unit",
+    "test:unit": "vitest run --exclude \"**/integration/**\"",
+    "test:integration": "vitest run packages/core/tests/integration",
+    "devnet:setup": "tsx scripts/setup-devnet.ts",
+    "devnet:validate": "tsx validation/run-validation.ts",
+    "devnet:cross-check": "tsx validation/real-world-cross-check.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "@typescript-eslint/eslint-plugin": "^8.11.0",
+    "@typescript-eslint/parser": "^8.11.0",
+    "eslint": "^9.13.0",
+    "prettier": "^3.3.3",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.65.0",
+    "vitest": "^2.1.0"
+  }
+}
