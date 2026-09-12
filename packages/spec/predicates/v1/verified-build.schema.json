@@ -1,0 +1,31 @@
+{
+  "predicateType": "v1/VerifiedBuildAttestation",
+  "version": 1,
+  "semantics": "current-status",
+  "layout": [13, 13, 12, 0, 8],
+  "field_names": [
+    "programId",
+    "binaryHash",
+    "sourceCommit",
+    "verificationStatus",
+    "verificationTimestamp"
+  ],
+  "fields": [
+    { "name": "programId", "type": "VecU8", "ordinal": 13, "notes": "Subject of the attestation, raw 32 bytes" },
+    { "name": "binaryHash", "type": "VecU8", "ordinal": 13, "notes": "Raw digest of the on-chain binary" },
+    { "name": "sourceCommit", "type": "String", "ordinal": 12, "notes": "" },
+    {
+      "name": "verificationStatus",
+      "type": "U8",
+      "ordinal": 0,
+      "notes": "No boolean collapse of 'unverifiable' into 'not verified'",
+      "ordinalTable": { "0": "Verified", "1": "Mismatch", "2": "Unknown" }
+    },
+    { "name": "verificationTimestamp", "type": "I64", "ordinal": 8, "notes": "Unix timestamp" }
+  ],
+  "nonce": {
+    "formula": "sha256(programId || predicateType)",
+    "disambiguator": null,
+    "note": "current-status semantics: one live record per (issuer, program). Republishing requires CloseAttestation on the old record first."
+  }
+}
