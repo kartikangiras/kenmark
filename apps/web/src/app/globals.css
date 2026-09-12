@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+/*
+ * Monochrome by
+ * design: --primary IS the foreground white, not a brand hue. The hue-260 cast on
+ * dark neutrals and hue-90 cast on light ones is what keeps the greys from reading
+ * flat — don't "simplify" them to pure greys.
+ */
+:root {
+  --background: oklch(0.06 0.008 260);
+  --foreground: oklch(0.94 0.005 90);
+  --card: oklch(0.09 0.008 260);
+  --card-foreground: oklch(0.94 0.005 90);
+  --popover: oklch(0.09 0.008 260);
+  --popover-foreground: oklch(0.94 0.005 90);
+  --primary: oklch(0.94 0.005 90);
+  --primary-foreground: oklch(0.06 0.008 260);
+  --secondary: oklch(0.12 0.008 260);
+  --secondary-foreground: oklch(0.94 0.005 90);
+  --muted: oklch(0.12 0.008 260);
+  --muted-foreground: oklch(0.55 0.015 90);
+  --accent: oklch(0.14 0.01 260);
+  --accent-foreground: oklch(0.94 0.005 90);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.94 0.005 90);
+  --border: oklch(0.18 0.008 260);
+  --input: oklch(0.14 0.008 260);
+  --ring: oklch(0.94 0.005 90);
+  --radius: 0.25rem;
+
+  /* Verification status colors. Used only as small indicator dots and status text —
+     never as fills — so the monochrome system stays intact. */
+  --status-verified: oklch(0.72 0.16 155);
+  --status-mismatch: oklch(0.72 0.16 65);
+  --status-unknown: oklch(0.55 0.015 90);
+}
+
+@theme inline {
+  --font-sans: var(--font-instrument), "Instrument Sans", system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", monospace;
+  --font-display: var(--font-instrument-serif), "Instrument Serif", Georgia, serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-status-verified: var(--status-verified);
+  --color-status-mismatch: var(--status-mismatch);
+  --color-status-unknown: var(--status-unknown);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* The source system animates unconditionally. Everything here is decorative, so
+     all of it collapses to a static end state when the user asks for less motion. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .word-gradient {
+    background: linear-gradient(45deg, #10b981 0%, #6366f1 25%, #67e8f9 50%, #fbbf24 75%, #10b981 100%);
+    background-size: 300% 300%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 1.5s ease infinite;
+  }
+
+  @keyframes gradient-shift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Active-step progress rule in the How It Works cards. */
+  .animate-progress {
+    animation: progress 6s linear forwards;
+  }
+
+  @keyframes progress {
+    from {
+      width: 0%;
+    }
+    to {
+      width: 100%;
+    }
+  }
+}
