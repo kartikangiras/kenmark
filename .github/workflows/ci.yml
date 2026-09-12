@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test:unit
+      - run: npm run build
+
+  devnet:
+    # Publishes real devnet transactions, so it only runs on demand.
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+
+      # The integration suite reads its signer from scripts/.devnet-keys.json,
+      # which is gitignored, so rebuild it from repository secrets.
+      - name: Provision devnet fixtures from secrets
+        env:
+          KEYPAIR_JSON: ${{ secrets.KENMARK_DEVNET_KEYPAIR_JSON }}
+          AUTHORITY: ${{ secrets.KENMARK_DEVNET_AUTHORITY }}
+          CREDENTIAL: ${{ secrets.KENMARK_DEVNET_CREDENTIAL }}
+          RPC_URL: ${{ secrets.KENMARK_DEVNET_RPC_URL }}
+        run: |
+          set -euo pipefail
+          for name in KEYPAIR_JSON AUTHORITY CREDENTIAL RPC_URL; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Required secret KENMARK_DEVNET_${name} is empty."
+              exit 1
+            fi
+          done
+          printf '%s' "$KEYPAIR_JSON" > scripts/.devnet-keypair-issuer-1.json
+          node -e '
+            const { writeFileSync } = require("node:fs");
+            const { resolve } = require("node:path");
+            writeFileSync("scripts/.devnet-keys.json", JSON.stringify({
+              rpcUrl: process.env.RPC_URL,
+              issuers: [{
+                label: "issuer-1",
+                keypairPath: resolve("scripts/.devnet-keypair-issuer-1.json"),
+                authority: process.env.AUTHORITY,
+                credential: process.env.CREDENTIAL,
+                credentialName: "kenmark-tranche1-issuer-1",
+              }],
+            }, null, 2));
+          '
+
+      - run: npm run test:integration
+        env:
+          # Fail instead of skipping when fixtures are missing.
+          KENMARK_REQUIRE_DEVNET: "1"
