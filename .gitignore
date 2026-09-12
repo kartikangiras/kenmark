@@ -1,0 +1,19 @@
+# dependencies and build output
+node_modules/
+dist/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# local tooling
+.claude/
+.DS_Store
+*.log
+
+# devnet signing keys written by scripts/setup-devnet.ts
+scripts/.devnet-keys.json
+.devnet-keypair*.json
+
+# private working notes
+Kenmark-ddd.md
