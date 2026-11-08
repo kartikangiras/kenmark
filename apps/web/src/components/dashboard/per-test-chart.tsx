@@ -13,12 +13,12 @@ const FILTERS = [
 ] as const;
 
 const SHORT: Record<string, string> = {
-  "test1-fidelity": "T1",
-  "test2-multi-issuer": "T2",
-  "test3-memcmp": "T3",
-  "test4-roundtrip": "T4",
-  "test5-cross-validation": "T5",
-  "test6-schema-version": "T6",
+  "test1-fidelity": "Fidelity",
+  "test2-multi-issuer": "Issuers",
+  "test3-memcmp": "Filter",
+  "test4-roundtrip": "Round-trip",
+  "test5-cross-validation": "Mainnet",
+  "test6-schema-version": "Versions",
   "registry-cross-check": "Registry",
 };
 

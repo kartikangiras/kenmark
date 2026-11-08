@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Pills } from "./ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
@@ -69,12 +70,13 @@ const STATUS_FILL: Record<AttestationRecord["status"], string> = {
 export function ProgramField({ records }: { records: AttestationRecord[] }) {
   const router = useRouter();
   const [value, setValue] = useState("");
+  const [mode, setMode] = useState<"program" | "credential" | "authority">("program");
   const items = pins(records);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const id = value.trim();
-    if (id) router.push(`/dashboard/lookup?program=${encodeURIComponent(id)}`);
+    if (id) router.push(`/dashboard/verify?${mode}=${encodeURIComponent(id)}`);
   };
 
   return (
@@ -106,6 +108,18 @@ export function ProgramField({ records }: { records: AttestationRecord[] }) {
 
       <div className="relative z-10 flex flex-col gap-3 p-4 sm:p-6">
         <form onSubmit={submit} className="flex flex-col gap-2 sm:flex-row">
+          <div className="rounded-full bg-db-black p-1 self-start sm:self-auto">
+            <Pills
+              options={[
+                { value: "program", label: "Program" },
+                { value: "credential", label: "Credential" },
+                { value: "authority", label: "Wallet" },
+              ]}
+              value={mode}
+              onChange={setMode}
+              label="What to verify"
+            />
+          </div>
           <label htmlFor="field-program" className="sr-only">
             Program ID
           </label>
@@ -113,7 +127,13 @@ export function ProgramField({ records }: { records: AttestationRecord[] }) {
             id="field-program"
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            placeholder="Paste a program ID to query devnet"
+            placeholder={
+              mode === "program"
+                ? "Paste a program ID to verify on devnet"
+                : mode === "credential"
+                  ? "Paste your SAS credential address"
+                  : "Paste your wallet address"
+            }
             spellCheck={false}
             autoComplete="off"
             className="h-12 flex-1 rounded-full border border-db-border bg-db-chip px-5 font-mono text-sm text-db-fg placeholder:text-db-muted outline-none focus-visible:ring-2 focus-visible:ring-db-accent/50"
@@ -132,14 +152,14 @@ export function ProgramField({ records }: { records: AttestationRecord[] }) {
             <button
               key={p.programId}
               type="button"
-              onClick={() => router.push(`/dashboard/lookup?program=${p.programId}`)}
+              onClick={() => router.push(`/dashboard/verify?program=${p.programId}`)}
               className="rounded-full border border-db-border bg-db-chip px-3 py-1 text-xs text-db-fg/80 transition-colors hover:text-db-fg outline-none focus-visible:ring-2 focus-visible:ring-db-accent/50"
             >
               {p.label}
             </button>
           ))}
           <Link
-            href="/dashboard/issuers#lookup"
+            href="/dashboard/verify?mode=credential"
             className="rounded-full border border-db-accent/40 bg-db-chip px-3 py-1 text-xs text-db-accent transition-colors hover:bg-db-accent/10 outline-none focus-visible:ring-2 focus-visible:ring-db-accent/50"
           >
             Check your own credential →

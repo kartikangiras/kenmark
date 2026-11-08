@@ -33,12 +33,22 @@ function asStatus(name: string): VerificationStatus {
   return name === "Verified" || name === "Mismatch" ? name : "Unknown";
 }
 
-function Inner({ presets }: { presets: IssuerPreset[] }) {
+function Inner({
+  presets,
+  basePath,
+  initialMode,
+}: {
+  presets: IssuerPreset[];
+  basePath: string;
+  initialMode?: Mode;
+}) {
   const router = useRouter();
   const params = useSearchParams();
   const initialCredential = params.get("credential") ?? "";
   const initialAuthority = params.get("authority") ?? "";
-  const [mode, setMode] = useState<Mode>(initialAuthority ? "authority" : "credential");
+  const [mode, setMode] = useState<Mode>(
+    initialAuthority ? "authority" : (initialMode ?? "credential"),
+  );
   const [value, setValue] = useState(initialAuthority || initialCredential);
   const [state, setState] = useState<State>({ kind: "idle" });
 
@@ -80,7 +90,7 @@ function Inner({ presets }: { presets: IssuerPreset[] }) {
   const go = (m: Mode, id: string) => {
     setMode(m);
     setValue(id);
-    router.replace(`/dashboard/issuers?${m}=${encodeURIComponent(id)}`, { scroll: false });
+    router.replace(`${basePath}?${m}=${encodeURIComponent(id)}`, { scroll: false });
     void run(m, id);
   };
 
@@ -384,10 +394,18 @@ function AuthorityResult({
   );
 }
 
-export function IssuerLookup({ presets }: { presets: IssuerPreset[] }) {
+export function IssuerLookup({
+  presets,
+  basePath = "/dashboard/issuers",
+  initialMode,
+}: {
+  presets: IssuerPreset[];
+  basePath?: string;
+  initialMode?: "credential" | "authority";
+}) {
   return (
     <Suspense fallback={null}>
-      <Inner presets={presets} />
+      <Inner presets={presets} basePath={basePath} initialMode={initialMode} />
     </Suspense>
   );
 }

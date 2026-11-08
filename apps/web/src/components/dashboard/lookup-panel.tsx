@@ -72,13 +72,13 @@ export function LookupPanel({ initialProgram }: { initialProgram: string }) {
     e.preventDefault();
     const id = value.trim();
     if (!id) return;
-    router.replace(`/dashboard/lookup?program=${encodeURIComponent(id)}`);
+    router.replace(`/dashboard/verify?program=${encodeURIComponent(id)}`);
     void run(id);
   };
 
   const choose = (programId: string) => {
     setValue(programId);
-    router.replace(`/dashboard/lookup?program=${programId}`);
+    router.replace(`/dashboard/verify?program=${programId}`);
     void run(programId);
   };
 

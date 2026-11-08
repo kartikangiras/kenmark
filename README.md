@@ -84,7 +84,7 @@ npm run dev -w @kenmark/web    # http://localhost:3000
 | `/dashboard/attestations` | Searchable, sortable table of all published attestations with Explorer links. |
 | `/dashboard/issuers` | Kenmark's two credentials read live from the chain, plus a lookup for any SAS credential or wallet authority on devnet. |
 | `/dashboard/validation` | The markdown reports from `validation/test-results/`, rendered. |
-| `/dashboard/lookup` | Runs the aggregator for any program ID against devnet. |
+| `/dashboard/verify` | One entry point with three modes: a program ID, a credential, or a wallet. Runs against devnet. |
 | `/api/lookup?program=<id>` | JSON for the same query. |
 | `/api/issuer?credential=<addr>` or `?authority=<addr>` | A credential account with everything published under it, or the credentials a wallet controls. |
 | `/api/export` | The normalised attestation records as a JSON download. |

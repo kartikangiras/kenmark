@@ -346,7 +346,7 @@ await step("overview", async () => {
 
   await page.type("#field-program", phoenix);
   await page.click('[data-testid="program-field"] button[type="submit"]');
-  await page.waitFor(`location.pathname === "/dashboard/lookup"`);
+  await page.waitFor(`location.pathname === "/dashboard/verify"`);
   await page.waitFor(`document.querySelector('[data-testid="lookup-summary"]') !== null`, {
     timeout: 30000,
   });
@@ -366,7 +366,7 @@ await step("overview", async () => {
 
 await step("lookup", async () => {
   page.consoleErrors.length = 0;
-  await page.goto(`${BASE}/dashboard/lookup`);
+  await page.goto(`${BASE}/dashboard/verify`);
   await page.clickText("Kamino");
   await page.waitFor(`document.querySelector('[data-testid="lookup-summary"]') !== null`, {
     timeout: 30000,
@@ -615,8 +615,9 @@ await step("landing and docs", async () => {
   );
   check(
     "landing: issuer section links to the credential lookup",
-    (await page.eval(`document.querySelector('a[href="/dashboard/issuers#lookup"]') !== null`)) ===
-      true,
+    (await page.eval(
+      `document.querySelector('a[href="/dashboard/verify?mode=credential"]') !== null`,
+    )) === true,
   );
   check(
     "landing: hero call to action opens the dashboard",
@@ -642,7 +643,7 @@ await step("mobile", async () => {
     "/",
     "/dashboard",
     "/dashboard/attestations",
-    "/dashboard/lookup",
+    "/dashboard/verify",
     "/dashboard/issuers",
   ]) {
     await page.goto(`${BASE}${path}`);

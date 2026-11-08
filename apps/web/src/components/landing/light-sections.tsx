@@ -67,7 +67,11 @@ export function IssuerCta() {
     <LightBlock
       title="Bring your own credential"
       body="Already publishing on the Solana Attestation Service? Paste your credential or wallet and the dashboard reads your account and every attestation under it straight from devnet. New here? Provision a credential and publish in three commands."
-      cta={{ label: "Check your credential", href: "/dashboard/issuers#lookup", tone: "ink" }}
+      cta={{
+        label: "Check your credential",
+        href: "/dashboard/verify?mode=credential",
+        tone: "ink",
+      }}
       secondary={{ label: "Read the issuer guide", href: "/docs#workflow" }}
       illustration={<WirePanels />}
     />

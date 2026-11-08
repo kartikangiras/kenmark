@@ -28,7 +28,7 @@ const PILLARS = [
     ),
     glyph: <FunnelGlyph />,
     body: "One getProgramAccounts call with two memcmp filters, then per-record schema resolution. Anyone re-running it against raw RPC gets the same answer.",
-    links: [{ label: "Run a lookup", href: "/dashboard/lookup" }],
+    links: [{ label: "Verify a program", href: "/dashboard/verify" }],
   },
   {
     title: (
@@ -42,7 +42,7 @@ const PILLARS = [
     body: "Any security firm publishes under its own credential. Two issuers coexist for the same program without collision, proven on devnet.",
     links: [
       { label: "See the issuers", href: "/dashboard/issuers" },
-      { label: "Check yours", href: "/dashboard/issuers#lookup" },
+      { label: "Check yours", href: "/dashboard/verify?mode=credential" },
     ],
   },
 ];

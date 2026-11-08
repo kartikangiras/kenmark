@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
     "/dashboard": validationReports,
     "/dashboard/**/*": validationReports,
   },
+  async redirects() {
+    return [{ source: "/dashboard/lookup", destination: "/dashboard/verify", permanent: true }];
+  },
 };
 
 export default nextConfig;

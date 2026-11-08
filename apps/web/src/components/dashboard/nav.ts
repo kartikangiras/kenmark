@@ -19,7 +19,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard/attestations", label: "Attestations", icon: FileCheck2 },
   { href: "/dashboard/issuers", label: "Issuers", icon: KeyRound },
   { href: "/dashboard/validation", label: "Validation", icon: FlaskConical },
-  { href: "/dashboard/lookup", label: "Lookup", icon: Search },
+  { href: "/dashboard/verify", label: "Verify", icon: Search },
   { href: "/docs", label: "Docs", icon: BookOpen },
 ];
 
