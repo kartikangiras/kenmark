@@ -11,6 +11,7 @@ import {
   Kpi,
   PageHeader,
 } from "@/components/dashboard/ui";
+import { IssuerLookup } from "@/components/dashboard/issuer-lookup";
 
 export const revalidate = 60;
 
@@ -26,8 +27,18 @@ export default async function IssuersPage() {
     <>
       <PageHeader
         title="Issuers"
-        description="Each issuer is a Solana Attestation Service credential. The authority and credential name below are read from the chain on every refresh; the attestation counts compare the validation artifact with what is live on devnet."
+        description="Each issuer is a Solana Attestation Service credential. Check any credential or wallet below, or scroll to Kenmark's own two issuers, whose authority and name are read from the chain on every refresh."
       />
+
+      <div className="mb-8">
+        <IssuerLookup
+          presets={list.map((i, index) => ({
+            label:
+              details?.find((d) => d.credential === i.credential)?.name ?? `issuer-${index + 1}`,
+            credential: i.credential,
+          }))}
+        />
+      </div>
 
       {!details && (
         <div className="mb-6 text-sm">
@@ -47,6 +58,7 @@ export default async function IssuersPage() {
               key={issuer.credential}
               data-testid="issuer-card"
               data-credential={issuer.credential}
+              data-authority={detail?.authority ?? ""}
             >
               <div className="mb-6 flex items-start justify-between gap-4">
                 <div>

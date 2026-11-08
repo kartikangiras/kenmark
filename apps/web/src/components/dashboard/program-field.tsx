@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { cn, truncateAddress } from "@/lib/utils";
@@ -137,6 +138,12 @@ export function ProgramField({ records }: { records: AttestationRecord[] }) {
               {p.label}
             </button>
           ))}
+          <Link
+            href="/dashboard/issuers#lookup"
+            className="rounded-full border border-db-accent/40 bg-db-chip px-3 py-1 text-xs text-db-accent transition-colors hover:bg-db-accent/10 outline-none focus-visible:ring-2 focus-visible:ring-db-accent/50"
+          >
+            Check your own credential →
+          </Link>
         </div>
       </div>
 

@@ -5,7 +5,9 @@ import {
   SAS_PROGRAM_ID,
   createRpcClient,
   loadConfig,
+  queryAttestationsForCredential,
   queryAttestationsForProgram,
+  queryCredentialsForAuthority,
   resolveAndDecode,
   verifiedBuild,
   withRateLimitBackoff,
@@ -52,6 +54,34 @@ export interface LookupResult {
 }
 
 export class InvalidProgramId extends Error {}
+export class InvalidAddress extends Error {}
+
+function parseAddress(raw: string, what: string): Address {
+  try {
+    return address(raw.trim());
+  } catch {
+    throw new InvalidAddress(`"${raw}" is not a valid base58 ${what}.`);
+  }
+}
+
+function toDecodedView(
+  d: Awaited<ReturnType<typeof resolveAndDecode>>["decoded"][number],
+): DecodedView {
+  const base58 = getBase58Decoder();
+  return {
+    attestation: d.attestationAddress,
+    predicateType: d.predicateType,
+    schemaVersion: d.schemaVersion,
+    issuer: { credential: d.issuer.credential, authority: d.issuer.authority },
+    fields: {
+      programId: base58.decode(d.fields.programId),
+      binaryHash: Buffer.from(d.fields.binaryHash).toString("hex"),
+      sourceCommit: d.fields.sourceCommit,
+      verificationStatus: verifiedBuild.verificationStatusName(d.fields.verificationStatus),
+      verificationTimestamp: Number(d.fields.verificationTimestamp),
+    },
+  };
+}
 
 // Repeated lookups of the same program within half a minute (demo clicks, a
 // test run) are served from memory instead of spending another RPC quota hit.
@@ -79,8 +109,6 @@ export async function lookupProgram(programId: string): Promise<LookupResult> {
     const records = await queryAttestationsForProgram(rpc, rpcUrl, target);
     return resolveAndDecode(rpc, rpcUrl, records);
   });
-  const base58 = getBase58Decoder();
-
   const result: LookupResult = {
     programId: target,
     cluster: "devnet",
@@ -88,19 +116,7 @@ export async function lookupProgram(programId: string): Promise<LookupResult> {
     elapsedMs: Date.now() - started,
     cached: false,
     fetchedAt: new Date().toISOString(),
-    decoded: decoded.map((d) => ({
-      attestation: d.attestationAddress,
-      predicateType: d.predicateType,
-      schemaVersion: d.schemaVersion,
-      issuer: { credential: d.issuer.credential, authority: d.issuer.authority },
-      fields: {
-        programId: base58.decode(d.fields.programId),
-        binaryHash: Buffer.from(d.fields.binaryHash).toString("hex"),
-        sourceCommit: d.fields.sourceCommit,
-        verificationStatus: verifiedBuild.verificationStatusName(d.fields.verificationStatus),
-        verificationTimestamp: Number(d.fields.verificationTimestamp),
-      },
-    })),
+    decoded: decoded.map(toDecodedView),
     excluded: excluded.map((e) => ({ attestation: e.attestationAddress, reason: e.reason })),
   };
   lookupCache.set(target, result);
@@ -188,4 +204,107 @@ export async function credentialDetails(credentials: string[]): Promise<Credenti
   } catch {
     return null;
   }
+}
+
+export interface CredentialLookup {
+  credential: CredentialView;
+  cluster: "devnet";
+  rpcHost: string;
+  elapsedMs: number;
+  cached: boolean;
+  fetchedAt: string;
+  decoded: DecodedView[];
+  excluded: { attestation: string; reason: string }[];
+}
+
+const credentialCache = new Map<string, CredentialLookup>();
+
+/**
+ * Everything the chain holds for one issuer credential: the account itself and
+ * every attestation published under it, decoded where the schema is one Kenmark
+ * knows and listed with a reason where it is not. Works for any SAS credential,
+ * not only Kenmark's own.
+ */
+export async function lookupCredential(raw: string): Promise<CredentialLookup> {
+  const target = parseAddress(raw, "credential address");
+  const hit = credentialCache.get(target);
+  if (hit && Date.now() - Date.parse(hit.fetchedAt) < LOOKUP_TTL_MS)
+    return { ...hit, cached: true };
+
+  const { rpcUrl } = config();
+  const rpc = createRpcClient(rpcUrl);
+  const started = Date.now();
+  const { account, decoded, excluded } = await withRateLimitBackoff(async () => {
+    const [account] = await withRetry(() => fetchAllMaybeCredential(rpc, [target]), { rpcUrl });
+    const records = await queryAttestationsForCredential(rpc, rpcUrl, target);
+    const { decoded, excluded } = await resolveAndDecode(rpc, rpcUrl, records);
+    return { account, decoded, excluded };
+  });
+
+  const result: CredentialLookup = {
+    credential: {
+      credential: target,
+      exists: account.exists,
+      authority: account.exists ? account.data.authority : null,
+      name: account.exists ? new TextDecoder().decode(new Uint8Array(account.data.name)) : null,
+      authorizedSigners: account.exists ? [...account.data.authorizedSigners] : [],
+    },
+    cluster: "devnet",
+    rpcHost: rpcHost(),
+    elapsedMs: Date.now() - started,
+    cached: false,
+    fetchedAt: new Date().toISOString(),
+    decoded: decoded.map(toDecodedView),
+    excluded: excluded.map((e) => ({ attestation: e.attestationAddress, reason: e.reason })),
+  };
+  credentialCache.set(target, result);
+  return result;
+}
+
+export interface AuthorityLookup {
+  authority: string;
+  cluster: "devnet";
+  rpcHost: string;
+  elapsedMs: number;
+  cached: boolean;
+  fetchedAt: string;
+  credentials: CredentialView[];
+}
+
+const authorityCache = new Map<string, AuthorityLookup>();
+
+/** Every credential a wallet controls as authority. */
+export async function lookupAuthority(raw: string): Promise<AuthorityLookup> {
+  const target = parseAddress(raw, "authority address");
+  const hit = authorityCache.get(target);
+  if (hit && Date.now() - Date.parse(hit.fetchedAt) < LOOKUP_TTL_MS)
+    return { ...hit, cached: true };
+
+  const { rpcUrl } = config();
+  const rpc = createRpcClient(rpcUrl);
+  const started = Date.now();
+  const credentials = await withRateLimitBackoff(async () => {
+    const addresses = await queryCredentialsForAuthority(rpc, rpcUrl, target);
+    if (addresses.length === 0) return [];
+    const accounts = await withRetry(() => fetchAllMaybeCredential(rpc, addresses), { rpcUrl });
+    return accounts.map<CredentialView>((a) => ({
+      credential: a.address,
+      exists: a.exists,
+      authority: a.exists ? a.data.authority : null,
+      name: a.exists ? new TextDecoder().decode(new Uint8Array(a.data.name)) : null,
+      authorizedSigners: a.exists ? [...a.data.authorizedSigners] : [],
+    }));
+  });
+
+  const result: AuthorityLookup = {
+    authority: target,
+    cluster: "devnet",
+    rpcHost: rpcHost(),
+    elapsedMs: Date.now() - started,
+    cached: false,
+    fetchedAt: new Date().toISOString(),
+    credentials,
+  };
+  authorityCache.set(target, result);
+  return result;
 }
