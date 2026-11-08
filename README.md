@@ -28,6 +28,7 @@ Implemented and validated against live devnet:
 | Typed error matrix | `packages/errors` | Read and write failures mirroring the SAS program's error set. |
 | Validation suite | `validation/` | Six tests on devnet plus a cross-check against OtterSec's verified-builds registry. Every report is a real transaction. |
 | Dashboard | `apps/web` | Every published attestation, the issuers, the validation reports, and a live lookup for any program ID. |
+| Issuer lookup | `apps/web`, `apps/api` | Paste any SAS credential or wallet on devnet to read the credential account and everything published under it. Non-Kenmark schemas are listed as excluded with the schema name. |
 | Hosted API | `apps/api` | `GET /programs/{programId}/security` served over HTTP from the same aggregator. |
 
 Planned, in order: the remaining eight predicates (upgrade authority, audit, static analysis,

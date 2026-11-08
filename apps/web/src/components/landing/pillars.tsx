@@ -40,7 +40,10 @@ const PILLARS = [
     ),
     glyph: <OrbitGlyph />,
     body: "Any security firm publishes under its own credential. Two issuers coexist for the same program without collision, proven on devnet.",
-    links: [{ label: "See the issuers", href: "/dashboard/issuers" }],
+    links: [
+      { label: "See the issuers", href: "/dashboard/issuers" },
+      { label: "Check yours", href: "/dashboard/issuers#lookup" },
+    ],
   },
 ];
 

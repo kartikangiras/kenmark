@@ -614,6 +614,11 @@ await step("landing and docs", async () => {
     )) === true,
   );
   check(
+    "landing: issuer section links to the credential lookup",
+    (await page.eval(`document.querySelector('a[href="/dashboard/issuers#lookup"]') !== null`)) ===
+      true,
+  );
+  check(
     "landing: hero call to action opens the dashboard",
     (await page.eval(
       `[...document.querySelectorAll('section a[href="/dashboard"]')].some((a) => a.textContent.trim() === "Open the dashboard")`,
