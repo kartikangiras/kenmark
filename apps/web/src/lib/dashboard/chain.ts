@@ -10,6 +10,7 @@ import {
   queryCredentialsForAuthority,
   resolveAndDecode,
   verifiedBuild,
+  isRateLimitError,
   withRateLimitBackoff,
   withRetry,
 } from "@kenmark/core";
@@ -206,6 +207,37 @@ export async function credentialDetails(credentials: string[]): Promise<Credenti
   }
 }
 
+/**
+ * Reads one Credential account. An address that holds some other kind of
+ * account (a program, a token account) makes sas-lib's decoder throw; that is
+ * reported as "no credential here", not as an RPC failure.
+ */
+async function readCredentialAccount(
+  rpc: ReturnType<typeof createRpcClient>,
+  rpcUrl: string,
+  target: Address,
+): Promise<CredentialView> {
+  try {
+    const [account] = await withRetry(() => fetchAllMaybeCredential(rpc, [target]), { rpcUrl });
+    return {
+      credential: target,
+      exists: account.exists,
+      authority: account.exists ? account.data.authority : null,
+      name: account.exists ? new TextDecoder().decode(new Uint8Array(account.data.name)) : null,
+      authorizedSigners: account.exists ? [...account.data.authorizedSigners] : [],
+    };
+  } catch (err) {
+    if (isRateLimitError(err)) throw err;
+    return {
+      credential: target,
+      exists: false,
+      authority: null,
+      name: null,
+      authorizedSigners: [],
+    };
+  }
+}
+
 export interface CredentialLookup {
   credential: CredentialView;
   cluster: "devnet";
@@ -235,20 +267,14 @@ export async function lookupCredential(raw: string): Promise<CredentialLookup> {
   const rpc = createRpcClient(rpcUrl);
   const started = Date.now();
   const { account, decoded, excluded } = await withRateLimitBackoff(async () => {
-    const [account] = await withRetry(() => fetchAllMaybeCredential(rpc, [target]), { rpcUrl });
+    const account = await readCredentialAccount(rpc, rpcUrl, target);
     const records = await queryAttestationsForCredential(rpc, rpcUrl, target);
     const { decoded, excluded } = await resolveAndDecode(rpc, rpcUrl, records);
     return { account, decoded, excluded };
   });
 
   const result: CredentialLookup = {
-    credential: {
-      credential: target,
-      exists: account.exists,
-      authority: account.exists ? account.data.authority : null,
-      name: account.exists ? new TextDecoder().decode(new Uint8Array(account.data.name)) : null,
-      authorizedSigners: account.exists ? [...account.data.authorizedSigners] : [],
-    },
+    credential: account,
     cluster: "devnet",
     rpcHost: rpcHost(),
     elapsedMs: Date.now() - started,

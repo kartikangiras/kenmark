@@ -203,14 +203,26 @@ app.get("/credentials/:credential/attestations", async (c) => {
   if (!credential) return c.json({ error: "credential is not a valid base58 address." }, 400);
   try {
     const { account, decoded, excluded } = await withRateLimitBackoff(async () => {
-      const [account] = await withRetry(() => fetchAllMaybeCredential(rpc, [credential]), {
+      // Some other kind of account at this address is "not a credential", not an RPC failure.
+      const account = await withRetry(() => fetchAllMaybeCredential(rpc, [credential]), {
         rpcUrl: config.rpcUrl,
-      });
+      })
+        .then(([a]) => credentialView(a))
+        .catch((err: unknown) => {
+          if (isRateLimitError(err)) throw err;
+          return {
+            credential,
+            exists: false,
+            authority: null,
+            name: null,
+            authorizedSigners: [] as string[],
+          };
+        });
       const records = await queryAttestationsForCredential(rpc, config.rpcUrl, credential);
       return { account, ...(await resolveAndDecode(rpc, config.rpcUrl, records)) };
     });
     return c.json({
-      credential: credentialView(account),
+      credential: account,
       cluster: "devnet",
       decoded: decoded.map(toView),
       excluded: excluded.map((e) => ({ attestation: e.attestationAddress, reason: e.reason })),
