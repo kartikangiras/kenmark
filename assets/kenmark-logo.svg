@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="160" viewBox="0 0 560 160" role="img" aria-label="Kenmark">
+  <rect width="560" height="160" rx="28" fill="#000000"/>
+  <g transform="translate(44 36)">
+    <rect x="0" y="0" width="22" height="88" fill="#ffffff"/>
+    <path d="M34 0h40L45 44l29 44H34z" fill="#ffffff" opacity="0.92"/>
+  </g>
+  <text x="150" y="104" fill="#ffffff" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="72" letter-spacing="-2">Kenmark</text>
+  <text x="152" y="134" fill="#9a9aa2" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="18" letter-spacing="2">VERIFIABLE SECURITY FOR SOLANA PROGRAMS</text>
+</svg>

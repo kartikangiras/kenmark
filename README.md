@@ -1,4 +1,6 @@
-# Kenmark
+<p align="center">
+  <img src="./assets/kenmark-logo.svg" width="520" alt="Kenmark">
+</p>
 
 [![CI](https://github.com/kartikangiras/kenmark/actions/workflows/ci.yml/badge.svg)](https://github.com/kartikangiras/kenmark/actions/workflows/ci.yml)
 
@@ -92,18 +94,6 @@ Scope, stated plainly: a matching hash and commit prove an attestation round-tri
 chain unchanged. They do not prove the commit produced the binary; that needs reproducible
 builds, which Kenmark does not provide.
 
-## Repository layout
-
-| Path | Contents |
-|---|---|
-| `packages/spec` | Predicate schema definitions (JSON). No runtime code. |
-| `packages/core` | Schema encode/decode, RPC client with retry and rate-limit backoff, the aggregator, and the credential and authority scans. |
-| `packages/errors` | Error classes mirroring the SAS program's error set. |
-| `apps/web` | Landing page, docs, and the dashboard (Next.js). |
-| `apps/api` | Hosted aggregation API (Hono on Node). |
-| `scripts` | `setup-devnet.ts`: provisions devnet issuer wallets and credentials. |
-| `validation` | Devnet validation scripts and their published results. |
-
 ## Getting started
 
 ```bash
@@ -180,14 +170,6 @@ Invalid addresses return 400. When the RPC endpoint rate-limits, the API returns
 npm run build && npm run start -w @kenmark/web -- -p 3123   # in one terminal
 E2E_BASE_URL=http://localhost:3123 npm run test:e2e -w @kenmark/web
 ```
-
-## Deployment
-
-- **Web** deploys to Vercel with the project root directory set to `apps/web`; `apps/web/vercel.json`
-  builds the workspace packages first.
-- **API** deploys to Railway from the repository root; `railpack.json` builds `@kenmark/api` and
-  starts it. The service listens on `PORT` and answers `/health`.
-- Set `KENMARK_RPC_URL` on both to a dedicated devnet endpoint.
 
 ## Roadmap
 
