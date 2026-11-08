@@ -62,6 +62,47 @@ that resolves every attestation about a program from raw RPC.
 Every number on these pages is checked by the browser suite against the artifacts and against
 independent RPC reads (see Tests).
 
+## Try it with real addresses
+
+Every address below exists on devnet today and was checked against the chain when this
+README was written. Paste them into the Verify bar on the dashboard in the mode shown, or into
+the API routes above.
+
+Program mode:
+
+| Program | Address | What you get |
+|---|---|---|
+| Phoenix | `PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY` | Four attestations from four issuers, all Verified. |
+| Marinade | `MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD` | Mismatch: the registry's on-chain and executable hashes disagree. |
+| Kamino | `KaminoLendkCC8gK7iCK6oCEQaefsUEC1BeXKcm5cVc` | Unknown: the registry has no data, so fields are zero, not falsely "not verified". |
+| SPL Token | `TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA` | Four attestations with different commits and dates; the newest commit links to GitHub. |
+
+Credential mode:
+
+| Credential | Address | What you get |
+|---|---|---|
+| Kenmark issuer 1 | `BndDAk14MhEvBqCYdJxBgTRvUSZguM2fVx2ouFz2Gm9` | Name `kenmark-v1-issuer-1`, its authority, and 29 decoded attestations. |
+| Kenmark issuer 2 | `5pkJuZmQy5uZnViX6tXQ5o5BEKkxiBsAU9RQ5DdrM7r8` | Name `kenmark-v1-issuer-2` and 4 attestations. |
+| An earlier Kenmark credential | `9edYkutRTcrtiaxhf8imvx58PF6Za7Taga9ubckaJChw` | 45 attestations, the largest list. |
+| Another project's issuer | `1MKpo9u1K1fjRBUs9C2ifYkBjFh1tm5S6jMgefYbSmz` | Name `CORDON-PILOT-ISSUER`; its attestation is listed as excluded with its own schema name, `CORDON-KYC-V1`. |
+| Another project's issuer | `12ot2uDK16fXMGk8UyPpmZUgpbGMLvm28nLSa94tcquh` | Name `Personal`; two records under ShowTell schemas, listed as excluded. |
+
+Wallet mode:
+
+| Wallet | Address | What you get |
+|---|---|---|
+| Kenmark issuer 1 authority | `9Lb5Pe9Y8LGJGWsu32dSd55Yefh4yzakhpirn8w7TNRG` | Its credential, with a button to open the attestations under it. |
+| Kenmark issuer 2 authority | `5M9qQK24Ej8jbKRNG2o75UNAvYkThkHGRLKATUpNVrnE` | Its credential. |
+| A wallet outside Kenmark | `Fov7hEzXxNGsNri3n9Uu4fm3Jto5453dnQ8jCkQbwVw3` | `T3 Credential`, a credential with no attestations yet. |
+
+Edge cases: `11111111111111111111111111111111` in Credential mode reports "no credential account
+at this address" rather than an error, and any string that is not base58 is rejected before an
+RPC call is made.
+
+Any other SAS credential or wallet on devnet works the same way; there are over 1,800
+credentials there today. Attestations under schemas Kenmark does not define are always listed
+with their predicate name rather than decoded.
+
 ## Use cases
 
 - **Wallets and explorers** show a program's verified-build status next to the signing prompt
