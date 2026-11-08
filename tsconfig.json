@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@kenmark/core": ["packages/core/src/index.ts"],
+      "@kenmark/errors": ["packages/errors/src/index.ts"]
+    }
+  },
+  "include": ["scripts", "validation", "packages/*/src", "packages/*/tests", "vitest.config.ts"]
+}
