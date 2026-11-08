@@ -11,6 +11,11 @@ predicate schemas for those facts on top of the
 that resolves every attestation about a program from raw RPC. Issuers publish under their own
 SAS credentials. Kenmark does not score programs and does not decide who may attest.
 
+## Live
+
+- Dashboard and docs: <https://kenmark-sigma.vercel.app>
+- Lookup API on the same deployment: <https://kenmark-sigma.vercel.app/api/lookup?program=PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY>
+
 ## What exists today
 
 Implemented and validated against live devnet:
