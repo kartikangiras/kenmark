@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, type LucideIcon } from "lucide-react";
 import { cn, truncateAddress } from "@/lib/utils";
 import type { VerificationStatus } from "@/lib/dashboard/records";
 
@@ -222,5 +222,76 @@ export function EmptyNote({ children }: { children: React.ReactNode }) {
     <p className="rounded-xl border border-dashed border-white/15 p-4 text-sm text-white/60">
       {children}
     </p>
+  );
+}
+
+/** Translucent card with a top-left light sweep and a hairline border, on top of the mid-grey card colour. */
+export function GlassCard({ className, children, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-[22px] border border-white/10 bg-db-card text-db-card-fg shadow-[0_24px_48px_-28px_rgba(0,0,0,0.65)]",
+        className,
+      )}
+      {...props}
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_90%_at_0%_0%,rgba(255,255,255,0.16),transparent_55%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/25"
+      />
+      <div className="relative">{children}</div>
+    </div>
+  );
+}
+
+/** One number with an icon, as the KPI tiles on the overview. Carries data attributes for the test suite. */
+export function StatWidget({
+  icon: Icon,
+  value,
+  label,
+  note,
+  tone = "flat",
+  testId,
+  className,
+}: {
+  icon: LucideIcon;
+  value: string;
+  label: string;
+  note?: string;
+  tone?: "up" | "down" | "flat";
+  testId?: string;
+  className?: string;
+}) {
+  return (
+    <GlassCard
+      className={cn("p-5", className)}
+      data-testid={testId}
+      data-value={value}
+      data-delta={note}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15">
+          <Icon className="h-[18px] w-[18px]" />
+        </span>
+        {note && (
+          <span
+            className={cn(
+              "mt-1 text-xs",
+              tone === "up" && "text-db-up",
+              tone === "down" && "text-db-down",
+              tone === "flat" && "text-db-card-muted",
+            )}
+          >
+            {note}
+          </span>
+        )}
+      </div>
+      <div className="mt-6 text-[36px] leading-none tracking-tight">{value}</div>
+      <div className="mt-2 text-[15px] text-db-card-muted">{label}</div>
+    </GlassCard>
   );
 }

@@ -90,54 +90,6 @@ function ThemeToggle({ theme, onChange }: { theme: Theme; onChange: (t: Theme) =
   );
 }
 
-function Rail({ pathname }: { pathname: string }) {
-  const [search, ...rest] = [NAV_ITEMS[4], ...NAV_ITEMS.filter((_, i) => i !== 4)];
-  return (
-    <aside className="hidden lg:flex w-16 shrink-0 flex-col items-center gap-3 pt-2">
-      <Link
-        href={search.href}
-        aria-label={search.label}
-        title={search.label}
-        className={cn(
-          "flex h-14 w-14 items-center justify-center rounded-full bg-db-black text-white transition-transform hover:scale-105 outline-none focus-visible:ring-2 focus-visible:ring-db-accent/60",
-        )}
-      >
-        <search.icon className="h-5 w-5" />
-      </Link>
-      <div className="mt-28 flex flex-col gap-3">
-        {rest.map((item) => {
-          const active = isActive(pathname, item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-label={item.label}
-              title={item.label}
-              aria-current={active ? "page" : undefined}
-              className={cn(
-                "flex h-14 w-14 items-center justify-center rounded-full border border-db-border bg-db-chip text-db-fg/70 transition-colors hover:text-db-fg outline-none focus-visible:ring-2 focus-visible:ring-db-accent/50",
-                active && "text-db-accent border-db-accent/40",
-              )}
-            >
-              <item.icon className="h-5 w-5" />
-            </Link>
-          );
-        })}
-      </div>
-      <a
-        href={GITHUB_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Open the repository on GitHub"
-        title="GitHub"
-        className="mt-auto flex h-14 w-14 items-center justify-center rounded-full border border-db-border bg-db-chip text-db-fg/70 transition-colors hover:text-db-fg outline-none focus-visible:ring-2 focus-visible:ring-db-accent/50"
-      >
-        <ArrowUpRight className="h-5 w-5" />
-      </a>
-    </aside>
-  );
-}
-
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [theme, setTheme] = useTheme();
@@ -177,15 +129,22 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <TopNav pathname={pathname} />
             <div className="ml-auto flex shrink-0 items-center gap-3">
               <ThemeToggle theme={theme} onChange={setTheme} />
+              <a
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open the repository on GitHub"
+                title="GitHub"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-db-border bg-db-chip text-db-fg/70 transition-colors hover:text-db-fg outline-none focus-visible:ring-2 focus-visible:ring-db-accent/50"
+              >
+                <ArrowUpRight className="h-4 w-4" />
+              </a>
             </div>
           </div>
 
-          <div className="flex gap-6">
-            <Rail pathname={pathname} />
-            <main id="main" className="min-w-0 flex-1">
-              {children}
-            </main>
-          </div>
+          <main id="main" className="min-w-0">
+            {children}
+          </main>
         </div>
       </div>
     </div>

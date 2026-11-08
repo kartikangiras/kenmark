@@ -1,4 +1,5 @@
 import {
+  Activity,
   BookOpen,
   FileCheck2,
   FlaskConical,
@@ -16,10 +17,11 @@ export interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
+  { href: "/dashboard/verify", label: "Verify", icon: Search },
+  { href: "/dashboard/explorer", label: "Explorer", icon: Activity },
   { href: "/dashboard/attestations", label: "Attestations", icon: FileCheck2 },
   { href: "/dashboard/issuers", label: "Issuers", icon: KeyRound },
-  { href: "/dashboard/validation", label: "Validation", icon: FlaskConical },
-  { href: "/dashboard/verify", label: "Verify", icon: Search },
+  { href: "/dashboard/validation", label: "Real-world validation", icon: FlaskConical },
   { href: "/docs", label: "Docs", icon: BookOpen },
 ];
 

@@ -3,11 +3,20 @@ import { checkTotals, loadReports } from "@/lib/dashboard/reports";
 import { onChainCounts } from "@/lib/dashboard/chain";
 import { formatUtc, percent } from "@/lib/format";
 import { GITHUB_URL } from "@/lib/site";
-import { ArrowLink, BlackCard, Card, CardTitle, Kpi } from "@/components/dashboard/ui";
+import { Boxes, FileCheck2, ShieldCheck } from "lucide-react";
+import {
+  ArrowLink,
+  BlackCard,
+  CardTitle,
+  GlassCard,
+  Kpi,
+  StatWidget,
+} from "@/components/dashboard/ui";
 import { ShareBars, Sparkline } from "@/components/dashboard/charts";
 import { PageHeader } from "@/components/dashboard/ui";
 import { Toolbar } from "@/components/dashboard/toolbar";
 import { ProgramField } from "@/components/dashboard/program-field";
+import { VerifyBar } from "@/components/dashboard/verify-bar";
 import { SourceTable } from "@/components/dashboard/source-table";
 import { PerTestChart } from "@/components/dashboard/per-test-chart";
 
@@ -34,38 +43,38 @@ export default async function DashboardPage() {
     <>
       <PageHeader title="Attestation Dashboard" actions={<Toolbar />} />
 
+      <VerifyBar />
+
       <div className="grid grid-cols-12 gap-4">
         {/* Left column: overview and the two count cards */}
         <div className="col-span-12 flex flex-col gap-4 xl:col-span-4">
-          <Card>
-            <CardTitle className="mb-8">Overview</CardTitle>
-            <div className="grid grid-cols-3 gap-4">
-              <Kpi
-                testId="kpi-attestations"
-                value={String(s.attestations)}
-                label="Attestations"
-                delta={`${s.bySource["real-world"]} real-world`}
-                tone="flat"
-              />
-              <Kpi
-                testId="kpi-programs"
-                value={String(s.programs)}
-                label="Programs"
-                delta={`${s.issuers} issuers`}
-                tone="flat"
-              />
-              <Kpi
-                testId="kpi-checks"
-                value={checks.total ? percent(checks.passed, checks.total) : "—"}
-                label="Checks passed"
-                delta={checks.total ? `${checks.passed}/${checks.total}` : undefined}
-                tone={checks.passed === checks.total ? "up" : "down"}
-              />
-            </div>
-          </Card>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <StatWidget
+              testId="kpi-attestations"
+              icon={FileCheck2}
+              value={String(s.attestations)}
+              label="Attestations"
+              note={`${s.bySource["real-world"]} real-world`}
+            />
+            <StatWidget
+              testId="kpi-programs"
+              icon={Boxes}
+              value={String(s.programs)}
+              label="Programs"
+              note={`${s.issuers} issuers`}
+            />
+            <StatWidget
+              testId="kpi-checks"
+              icon={ShieldCheck}
+              value={checks.total ? percent(checks.passed, checks.total) : "—"}
+              label="Checks passed"
+              note={checks.total ? `${checks.passed}/${checks.total}` : undefined}
+              tone={checks.passed === checks.total ? "up" : "down"}
+            />
+          </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <Card className="flex flex-col">
+            <GlassCard className="flex flex-col p-6">
               <div className="mb-4 flex items-start justify-between">
                 <CardTitle>Verified</CardTitle>
                 <ArrowLink
@@ -86,8 +95,8 @@ export default async function DashboardPage() {
                 label="Cumulative verified attestations over the validation run"
                 className="mt-auto"
               />
-            </Card>
-            <Card className="flex flex-col">
+            </GlassCard>
+            <GlassCard className="flex flex-col p-6">
               <div className="mb-4 flex items-start justify-between">
                 <CardTitle>On devnet</CardTitle>
                 <ArrowLink href="/dashboard/issuers" label="Open issuers" />
@@ -105,7 +114,7 @@ export default async function DashboardPage() {
                 label="Cumulative attestations over the validation run"
                 className="mt-auto"
               />
-            </Card>
+            </GlassCard>
           </div>
         </div>
 
@@ -114,9 +123,9 @@ export default async function DashboardPage() {
           <div className="h-full xl:pb-0">
             <ProgramField records={records} />
           </div>
-          <Card
+          <GlassCard
             data-testid="status-card"
-            className="mt-4 xl:absolute xl:bottom-6 xl:right-6 xl:mt-0 xl:w-[400px] xl:shadow-xl"
+            className="mt-4 p-6 xl:absolute xl:bottom-6 xl:right-6 xl:mt-0 xl:w-[400px]"
           >
             <div className="mb-1 flex items-start justify-between">
               <CardTitle>Verification status</CardTitle>
@@ -126,7 +135,7 @@ export default async function DashboardPage() {
               <span className="text-db-up">{s.attestations}</span> total attestations
             </p>
             <ShareBars items={statusShare} label="Share of attestations by verification status" />
-          </Card>
+          </GlassCard>
         </div>
 
         {/* Bottom-left: table */}
