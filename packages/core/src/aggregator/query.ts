@@ -9,6 +9,13 @@ import { logger } from "../logging/logger.js";
  * differently and is stale; these were read back from a live devnet account.
  */
 const ATTESTATION_DISCRIMINATOR = 2;
+const CREDENTIAL_DISCRIMINATOR = 0;
+
+/** Byte offset of the credential pubkey inside an Attestation account header. */
+const CREDENTIAL_OFFSET = 33;
+
+/** Byte offset of the authority pubkey inside a Credential account (after the discriminator). */
+const AUTHORITY_OFFSET = 1;
 
 /**
  * Byte offset of the programId field. Every Kenmark predicate puts programId
@@ -50,16 +57,16 @@ function toBase58Bytes(raw: Uint8Array): string {
   return getBase58Decoder().decode(raw);
 }
 
-/**
- * Finds every attestation about a program: getProgramAccounts on the SAS
- * program with memcmp filters on the discriminator (offset 0) and programId
- * (offset 105), then parses each header. sas-lib has no bulk scan, so this
- * calls RPC directly.
- */
-export async function queryAttestationsForProgram(
+type Memcmp = { memcmp: { offset: bigint; bytes: never; encoding: "base58" } };
+
+function memcmp(offset: number, bytes: string): Memcmp {
+  return { memcmp: { offset: BigInt(offset), bytes: bytes as never, encoding: "base58" } };
+}
+
+async function scanAttestations(
   rpc: Rpc<SolanaRpcApi>,
   rpcUrl: string,
-  programId: Address,
+  filter: Memcmp,
 ): Promise<RawAttestationRecord[]> {
   const discriminatorBytes = toBase58Bytes(new Uint8Array([ATTESTATION_DISCRIMINATOR]));
 
@@ -71,36 +78,64 @@ export async function queryAttestationsForProgram(
           // Writes confirm at "confirmed"; reading at the "finalized" default
           // would miss an attestation published moments earlier.
           commitment: "confirmed",
-          filters: [
-            {
-              memcmp: {
-                offset: 0n,
-                bytes: discriminatorBytes as never,
-                encoding: "base58",
-              },
-            },
-            {
-              memcmp: {
-                offset: BigInt(PROGRAM_ID_OFFSET),
-                bytes: programId as unknown as never,
-                encoding: "base58",
-              },
-            },
-          ],
+          filters: [memcmp(0, discriminatorBytes), filter],
         })
         .send(),
     { rpcUrl },
   );
 
-  const records = results.map((result) => {
+  return results.map((result) => {
     const [base64Data] = result.account.data;
     const raw = new Uint8Array(Buffer.from(base64Data, "base64"));
     return parseAttestationHeader(result.pubkey, raw);
   });
+}
 
-  logger.debug(`queryAttestationsForProgram found ${records.length} record(s)`, {
-    programId,
-  });
-
+/**
+ * Finds every attestation about a program: getProgramAccounts on the SAS
+ * program with memcmp filters on the discriminator (offset 0) and programId
+ * (offset 105), then parses each header. sas-lib has no bulk scan, so this
+ * calls RPC directly.
+ */
+export async function queryAttestationsForProgram(
+  rpc: Rpc<SolanaRpcApi>,
+  rpcUrl: string,
+  programId: Address,
+): Promise<RawAttestationRecord[]> {
+  const records = await scanAttestations(rpc, rpcUrl, memcmp(PROGRAM_ID_OFFSET, programId));
+  logger.debug(`queryAttestationsForProgram found ${records.length} record(s)`, { programId });
   return records;
+}
+
+/** Every attestation an issuer has published under one credential, across all programs. */
+export async function queryAttestationsForCredential(
+  rpc: Rpc<SolanaRpcApi>,
+  rpcUrl: string,
+  credential: Address,
+): Promise<RawAttestationRecord[]> {
+  const records = await scanAttestations(rpc, rpcUrl, memcmp(CREDENTIAL_OFFSET, credential));
+  logger.debug(`queryAttestationsForCredential found ${records.length} record(s)`, { credential });
+  return records;
+}
+
+/** Addresses of every Credential account whose authority is the given key. */
+export async function queryCredentialsForAuthority(
+  rpc: Rpc<SolanaRpcApi>,
+  rpcUrl: string,
+  authority: Address,
+): Promise<Address[]> {
+  const discriminatorBytes = toBase58Bytes(new Uint8Array([CREDENTIAL_DISCRIMINATOR]));
+  const results = await withRetry(
+    () =>
+      rpc
+        .getProgramAccounts(SAS_PROGRAM_ID, {
+          encoding: "base64",
+          commitment: "confirmed",
+          dataSlice: { offset: 0, length: 0 },
+          filters: [memcmp(0, discriminatorBytes), memcmp(AUTHORITY_OFFSET, authority)],
+        })
+        .send(),
+    { rpcUrl },
+  );
+  return results.map((r) => r.pubkey);
 }

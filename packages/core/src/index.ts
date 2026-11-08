@@ -1,5 +1,10 @@
 export { SAS_PROGRAM_ID, loadConfig, type KenmarkConfig } from "./config/index.js";
-export { createRpcClient, isRateLimitError, withRateLimitBackoff, withRetry } from "./rpc/client.js";
+export {
+  createRpcClient,
+  isRateLimitError,
+  withRateLimitBackoff,
+  withRetry,
+} from "./rpc/client.js";
 export { logger, type LogLevel } from "./logging/logger.js";
 export { SCHEMA_DATA_TYPES, isValidSchemaDataType } from "./schemas/types.js";
 export {
@@ -11,7 +16,9 @@ export {
 export * as verifiedBuild from "./schemas/verified-build.js";
 export {
   parseAttestationHeader,
+  queryAttestationsForCredential,
   queryAttestationsForProgram,
+  queryCredentialsForAuthority,
   type RawAttestationRecord,
 } from "./aggregator/query.js";
 export {
