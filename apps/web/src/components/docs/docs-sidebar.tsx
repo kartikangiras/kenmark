@@ -45,7 +45,7 @@ export function DocsSidebar() {
   return (
     <>
       {/* Mobile top bar */}
-      <div className="lg:hidden sticky top-0 z-40 border-b border-foreground/10 bg-ink/80 backdrop-blur-xl">
+      <div className="lg:hidden sticky top-0 z-40 border-b border-foreground/10 bg-background/80 backdrop-blur-xl">
         <div className="flex h-14 items-center justify-between px-6">
           <Link
             href="/"

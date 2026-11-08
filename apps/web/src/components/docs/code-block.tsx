@@ -15,14 +15,14 @@ export function CodeBlock({
   children: React.ReactNode;
 }) {
   return (
-    <div className={cn("overflow-hidden rounded-2xl border border-white/10 bg-black", className)}>
-      <div className="flex items-center gap-2 border-b border-foreground/10 px-4 py-3">
-        <span aria-hidden="true" className="h-2 w-2 rounded-full bg-foreground/20" />
-        <span aria-hidden="true" className="h-2 w-2 rounded-full bg-foreground/20" />
-        <span aria-hidden="true" className="h-2 w-2 rounded-full bg-foreground/20" />
-        <span className="ml-2 font-mono text-xs text-muted-foreground">{title}</span>
+    <div className={cn("overflow-hidden rounded-2xl border border-black/10 bg-[#111]", className)}>
+      <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
+        <span aria-hidden="true" className="h-2 w-2 rounded-full bg-white/20" />
+        <span aria-hidden="true" className="h-2 w-2 rounded-full bg-white/20" />
+        <span aria-hidden="true" className="h-2 w-2 rounded-full bg-white/20" />
+        <span className="ml-2 font-mono text-xs text-white/50">{title}</span>
       </div>
-      <pre className="overflow-x-auto p-4 lg:p-6 font-mono text-xs lg:text-sm leading-relaxed text-foreground/80">
+      <pre className="overflow-x-auto p-4 lg:p-6 font-mono text-xs lg:text-sm leading-relaxed text-white/80">
         <code>{children}</code>
       </pre>
     </div>

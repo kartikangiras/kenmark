@@ -248,7 +248,7 @@ function SectionHeading({
 
 export default function DocsPage() {
   return (
-    <div className="min-h-screen bg-ink text-foreground">
+    <div className="docs-paper min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-[1400px] px-6 lg:px-12 lg:grid lg:grid-cols-[260px_1fr] lg:gap-16">
         <DocsSidebar />
 
@@ -269,7 +269,10 @@ export default function DocsPage() {
           </header>
 
           {/* Mobile TOC */}
-          <nav aria-label="On this page" className="lg:hidden mb-16 rounded-2xl bg-ink-card p-6">
+          <nav
+            aria-label="On this page"
+            className="lg:hidden mb-16 rounded-2xl border border-black/5 bg-card p-6"
+          >
             <span className="mb-4 block font-mono text-xs uppercase tracking-wider text-muted-foreground">
               On this page
             </span>
@@ -312,7 +315,7 @@ export default function DocsPage() {
                 : issuers attest under their own credentials, and the profile is reproducible by
                 anyone from raw RPC.
               </p>
-              <div className="rounded-2xl bg-ink-card p-6">
+              <div className="rounded-2xl border border-black/5 bg-card p-6">
                 <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
                   The one design rule
                 </span>
@@ -342,7 +345,10 @@ export default function DocsPage() {
                     { name: "Upgrade Authority", desc: "Already on-chain for every program" },
                     { name: "Security Ecosystem", desc: "Audit firms, bounties, static analysis" },
                   ].map((primitive) => (
-                    <li key={primitive.name} className="rounded-xl bg-ink-card p-4">
+                    <li
+                      key={primitive.name}
+                      className="rounded-xl border border-black/5 bg-card p-4"
+                    >
                       <span className="mb-1 flex items-center gap-2">
                         <span
                           aria-hidden="true"
@@ -551,7 +557,7 @@ export default function DocsPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               {liveFeatures.map((feature) => (
-                <div key={feature.name} className="rounded-2xl bg-ink-card p-6">
+                <div key={feature.name} className="rounded-2xl border border-black/5 bg-card p-6">
                   <div className="mb-3 flex items-center gap-2">
                     <span
                       aria-hidden="true"
@@ -671,7 +677,7 @@ export default function DocsPage() {
                 </>
               }
             >
-              <div className="mt-6 rounded-xl bg-ink-card p-4 text-sm text-muted-foreground leading-relaxed">
+              <div className="mt-6 rounded-xl border border-black/5 bg-card p-4 text-sm text-muted-foreground leading-relaxed">
                 <span className="mr-2 inline-flex align-middle">
                   <StatusBadge status="soon">Target interface</StatusBadge>
                 </span>
@@ -815,7 +821,10 @@ export default function DocsPage() {
 
             <div className="space-y-4">
               {roadmap.map((group) => (
-                <div key={group.title} className="rounded-2xl bg-ink-card p-6 lg:p-8">
+                <div
+                  key={group.title}
+                  className="rounded-2xl border border-black/5 bg-card p-6 lg:p-8"
+                >
                   <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
                     <h3 className="text-2xl tracking-tight">{group.title}</h3>
                     <StatusBadge status={group.status} />

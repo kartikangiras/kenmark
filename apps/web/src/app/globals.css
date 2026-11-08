@@ -113,6 +113,24 @@
     --db-down: #ff6b81;
     color-scheme: light;
   }
+  /* Docs sit on the landing's paper surface. Overriding the semantic tokens here
+     lets the existing utility classes resolve to the light palette. */
+  .docs-paper {
+    --background: #e4e4e6;
+    --foreground: #0b0b0b;
+    --card: #f4f4f5;
+    --card-foreground: #0b0b0b;
+    --popover: #f4f4f5;
+    --popover-foreground: #0b0b0b;
+    --muted: #d8d8db;
+    --muted-foreground: #4a4a4f;
+    --border: rgba(0, 0, 0, 0.1);
+    --input: #ffffff;
+    --ring: #0b0b0b;
+    --status-unknown: #6b6b70;
+    color-scheme: light;
+  }
+
   .db[data-theme="dark"] {
     --db-panel: #141416;
     --db-fg: #f3f3f4;
@@ -165,7 +183,14 @@
   }
 
   .word-gradient {
-    background: linear-gradient(45deg, #10b981 0%, #6366f1 25%, #67e8f9 50%, #fbbf24 75%, #10b981 100%);
+    background: linear-gradient(
+      45deg,
+      #10b981 0%,
+      #6366f1 25%,
+      #67e8f9 50%,
+      #fbbf24 75%,
+      #10b981 100%
+    );
     background-size: 300% 300%;
     background-clip: text;
     -webkit-background-clip: text;
