@@ -24,3 +24,5 @@ Kenmark-ddd.md
 
 # deployment tooling
 .vercel/
+.vercel
+.env*
