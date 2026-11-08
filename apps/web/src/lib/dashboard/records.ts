@@ -31,6 +31,8 @@ export interface AttestationRecord {
     message: string;
     repoUrl: string;
     lastVerifiedAt: string | null;
+    onChainHash: string;
+    executableHash: string;
   };
 }
 
@@ -156,6 +158,8 @@ function realWorldRecords(issuerCredential: string, issuerSchema: string): Attes
       message: row.osecSnapshot.message,
       repoUrl: row.osecSnapshot.repo_url,
       lastVerifiedAt: row.osecSnapshot.last_verified_at,
+      onChainHash: row.osecSnapshot.on_chain_hash,
+      executableHash: row.osecSnapshot.executable_hash,
     },
   }));
 }

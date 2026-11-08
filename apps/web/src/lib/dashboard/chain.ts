@@ -5,6 +5,7 @@ import {
   SAS_PROGRAM_ID,
   createRpcClient,
   loadConfig,
+  parseAttestationHeader,
   queryAttestationsForCredential,
   queryAttestationsForProgram,
   queryCredentialsForAuthority,
@@ -333,4 +334,120 @@ export async function lookupAuthority(raw: string): Promise<AuthorityLookup> {
   };
   authorityCache.set(target, result);
   return result;
+}
+
+export interface LiveAttestation {
+  attestation: string;
+  exists: boolean;
+  binaryHash: string | null;
+  status: string | null;
+  verificationTimestamp: number | null;
+}
+
+/**
+ * Reads the given attestation accounts as they are on devnet right now, so a
+ * page can show whether the chain still agrees with the recorded artifact.
+ * One getMultipleAccounts call plus schema and credential resolution.
+ */
+export async function liveAttestations(
+  addresses: string[],
+): Promise<Record<string, LiveAttestation> | null> {
+  const { rpcUrl } = config();
+  const rpc = createRpcClient(rpcUrl);
+  const targets = addresses.map((a) => address(a));
+  try {
+    const result: Record<string, LiveAttestation> = {};
+    const { value } = await withRateLimitBackoff(() =>
+      withRetry(
+        () =>
+          rpc.getMultipleAccounts(targets, { encoding: "base64", commitment: "confirmed" }).send(),
+        { rpcUrl },
+      ),
+    );
+    const records: ReturnType<typeof parseAttestationHeader>[] = [];
+    for (const [i, account] of value.entries()) {
+      const target = targets[i];
+      if (!account) {
+        result[target] = {
+          attestation: target,
+          exists: false,
+          binaryHash: null,
+          status: null,
+          verificationTimestamp: null,
+        };
+        continue;
+      }
+      const [base64Data] = account.data;
+      records.push(
+        parseAttestationHeader(target, new Uint8Array(Buffer.from(base64Data, "base64"))),
+      );
+    }
+    const { decoded } = await withRateLimitBackoff(() => resolveAndDecode(rpc, rpcUrl, records));
+    for (const d of decoded) {
+      result[d.attestationAddress] = {
+        attestation: d.attestationAddress,
+        exists: true,
+        binaryHash: Buffer.from(d.fields.binaryHash).toString("hex"),
+        status: verifiedBuild.verificationStatusName(d.fields.verificationStatus),
+        verificationTimestamp: Number(d.fields.verificationTimestamp),
+      };
+    }
+    for (const target of targets) {
+      if (!result[target])
+        result[target] = {
+          attestation: target,
+          exists: true,
+          binaryHash: null,
+          status: null,
+          verificationTimestamp: null,
+        };
+    }
+    return result;
+  } catch {
+    return null;
+  }
+}
+
+export interface RecentSignature {
+  signature: string;
+  slot: number;
+  blockTime: number | null;
+  failed: boolean;
+  account: string;
+  label: string;
+}
+
+/** Recent transactions touching the given accounts, newest first. One getSignaturesForAddress call per account. */
+export async function recentSignatures(
+  accounts: { address: string; label: string }[],
+  limit = 10,
+): Promise<RecentSignature[] | null> {
+  const { rpcUrl } = config();
+  const rpc = createRpcClient(rpcUrl);
+  try {
+    const all: RecentSignature[] = [];
+    for (const { address: raw, label } of accounts) {
+      const target = address(raw);
+      const list = await withRateLimitBackoff(() =>
+        withRetry(
+          () => rpc.getSignaturesForAddress(target, { limit, commitment: "confirmed" }).send(),
+          { rpcUrl },
+        ),
+      );
+      for (const item of list) {
+        all.push({
+          signature: item.signature,
+          slot: Number(item.slot),
+          blockTime:
+            item.blockTime === null || item.blockTime === undefined ? null : Number(item.blockTime),
+          failed: item.err !== null,
+          account: target,
+          label,
+        });
+      }
+    }
+    return all.sort((a, b) => (b.blockTime ?? 0) - (a.blockTime ?? 0));
+  } catch {
+    return null;
+  }
 }
