@@ -1,0 +1,10 @@
+# Deploys apps/api, the hosted aggregation API. The web app deploys on Vercel.
+[build]
+builder = "NIXPACKS"
+buildCommand = "npm run build --workspace @kenmark/errors --workspace @kenmark/core --workspace @kenmark/api"
+
+[deploy]
+startCommand = "npm run start --workspace @kenmark/api"
+healthcheckPath = "/health"
+healthcheckTimeout = 120
+restartPolicyType = "ON_FAILURE"
