@@ -1,6 +1,7 @@
 export const GITHUB_URL = "https://github.com/kartikangiras/kenmark";
 export const VALIDATION_URL = `${GITHUB_URL}/tree/main/validation`;
 export const SAS_URL = "https://attest.solana.com";
+export const API_URL = "https://kenmark-api-production.up.railway.app";
 
 export const CLUSTER = "devnet" as const;
 

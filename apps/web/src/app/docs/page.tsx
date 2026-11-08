@@ -6,7 +6,7 @@ import { CodeBlock } from "@/components/docs/code-block";
 import { DocsSidebar } from "@/components/docs/docs-sidebar";
 import { StatusBadge } from "@/components/docs/status-badge";
 import { DOCS_SECTIONS } from "@/components/docs/sections";
-import { GITHUB_URL, VALIDATION_URL } from "@/lib/site";
+import { API_URL, GITHUB_URL, VALIDATION_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Kenmark Docs — machine-readable Solana program security",
@@ -75,6 +75,10 @@ const liveFeatures = [
     detail:
       "Every published attestation, the issuers, and the validation reports in one place, plus a lookup that runs the aggregator against devnet for any program ID.",
   },
+  {
+    name: "Hosted aggregation API",
+    detail: `GET ${API_URL}/programs/{programId}/security serves the profile shape from the spec: the one implemented predicate populated, the other sections explicitly empty, and the raw attestations always included.`,
+  },
 ];
 
 /**
@@ -132,7 +136,7 @@ const roadmap = [
     title: "Full profile, served",
     items: [
       "Remaining predicates — formal verification, runtime observation, supply chain, incidents",
-      "Hosted aggregation API — GET /programs/{programId}/security",
+      "API sections for each new predicate as it ships",
       "Issuer trust allowlist — a versioned, forkable default-issuers.json",
     ],
   },
