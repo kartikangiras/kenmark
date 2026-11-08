@@ -55,7 +55,7 @@ export function LookupCta() {
   return (
     <LightBlock
       title="Look up any program, get its profile"
-      body="Paste a program ID into the dashboard and the aggregator reads every attestation about it straight from devnet: issuer, status, binary hash, source commit, timestamp."
+      body="Paste a program ID, a credential, or a wallet into the dashboard and the aggregator reads straight from devnet: issuer, status, binary hash, source commit, timestamp. Real mainnet programs are cross-checked against a public registry and re-read live on every visit."
       cta={{ label: "Open the dashboard", href: "/dashboard", tone: "azure" }}
       illustration={<WireCards />}
     />

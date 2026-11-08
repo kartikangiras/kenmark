@@ -27,7 +27,7 @@ const PILLARS = [
       </>
     ),
     glyph: <FunnelGlyph />,
-    body: "One getProgramAccounts call with two memcmp filters, then per-record schema resolution. Anyone re-running it against raw RPC gets the same answer.",
+    body: "One getProgramAccounts call with two memcmp filters, then per-record schema resolution. Anyone re-running it against raw RPC gets the same answer, and a hosted API serves it over HTTP.",
     links: [{ label: "Verify a program", href: "/dashboard/verify" }],
   },
   {
