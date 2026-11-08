@@ -267,7 +267,7 @@ await step("overview", async () => {
   );
   const overlap = await page.eval(`(() => {
     const card = document.querySelector('[data-testid="status-card"]').getBoundingClientRect();
-    const form = document.querySelector('[data-testid="program-field"] form').getBoundingClientRect();
+    const form = document.querySelector('[data-testid="program-field"] p').getBoundingClientRect();
     const pins = [...document.querySelectorAll('[data-testid="program-pin"]')].map((p) => p.getBoundingClientRect());
     const hits = (r) => (r.right > card.left && r.left < card.right && r.bottom > card.top && r.top < card.bottom) || r.top < form.bottom + 36;
     return pins.filter(hits).length;
@@ -345,7 +345,7 @@ await step("overview", async () => {
   );
 
   await page.type("#field-program", phoenix);
-  await page.click('[data-testid="program-field"] button[type="submit"]');
+  await page.click('[data-testid="verify-bar"] button[type="submit"]');
   await page.waitFor(`location.pathname === "/dashboard/verify"`);
   await page.waitFor(`document.querySelector('[data-testid="lookup-summary"]') !== null`, {
     timeout: 30000,
@@ -553,11 +553,40 @@ await step("issuers", async () => {
 await step("validation", async () => {
   page.consoleErrors.length = 0;
   await page.goto(`${BASE}/dashboard/validation`);
-  await page.waitFor(`document.querySelectorAll('[data-testid="report"]').length > 0`);
-  const reportCount = readdirSync(reportsDir).filter((f) => f.endsWith(".md")).length;
+  await page.waitFor(`document.querySelectorAll('[data-testid="validation-program"]').length > 0`);
+  const widgets = await page.eval(
+    `[...document.querySelectorAll('[data-testid="validation-program"]')].map((e) => ({ program: e.dataset.program, status: e.dataset.status, pass: e.dataset.pass, live: e.dataset.live }))`,
+  );
+  const realPrograms = [
+    ...new Set(
+      expected.records
+        .filter(
+          (r) =>
+            realWorld.some((w) => w.programId === r.programBase58) ||
+            r.programBase58 === "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+        )
+        .map((r) => r.programBase58),
+    ),
+  ];
   check(
-    `validation: ${reportCount} reports render`,
-    (await page.count('[data-testid="report"]')) === reportCount,
+    `validation: one widget per real program (${realPrograms.length})`,
+    widgets.length === realPrograms.length &&
+      realPrograms.every((p) => widgets.some((w) => w.program === p)),
+    JSON.stringify(widgets),
+  );
+  check(
+    "validation: statuses span Verified, Mismatch, and Unknown",
+    ["Verified", "Mismatch", "Unknown"].every((st) => widgets.some((w) => w.status === st)),
+  );
+  check(
+    "validation: every widget records a passing round-trip",
+    widgets.every((w) => w.pass === "PASS"),
+    widgets.map((w) => w.pass).join(","),
+  );
+  check(
+    "validation: every widget matches devnet at request time",
+    widgets.every((w) => w.live === "match"),
+    widgets.map((w) => w.live).join(","),
   );
   check(
     `validation: checks KPI reads ${expected.checks}`,
@@ -565,23 +594,59 @@ await step("validation", async () => {
       expected.checks,
   );
   check(
-    "validation: first report is expanded",
-    (await page.eval(`document.querySelector('[data-testid="report"] details').open`)) === true,
-  );
-  await page.eval(`document.querySelectorAll('[data-testid="report"] summary')[1].click()`);
-  await sleep(100);
-  check(
-    "validation: a collapsed report expands on click",
-    (await page.eval(`document.querySelectorAll('[data-testid="report"] details')[1].open`)) ===
-      true,
+    "validation: widgets link to the live verify",
+    (await page.count(
+      '[data-testid="validation-program"] a[href^="/dashboard/verify?program="]',
+    )) === widgets.length,
   );
   check(
-    "validation: markdown renders the result line",
-    (await page.text('[data-testid="report"]'))?.includes("Result: PASS"),
+    "validation: schema and reproduce widgets render",
+    (await page.count('[data-testid="schema-widget"]')) === 1 &&
+      (await page.count('[data-testid="reproduce-widget"]')) === 1,
   );
   await shot(page, "e2e-validation");
   check(
     "validation: no console errors",
+    page.consoleErrors.length === 0,
+    page.consoleErrors.join(" | "),
+  );
+});
+
+await step("explorer", async () => {
+  page.consoleErrors.length = 0;
+  await page.goto(`${BASE}/dashboard/explorer`);
+  await page.waitFor(`document.querySelector('[data-testid="explorer"]') !== null`);
+  for (const label of ["Timeline", "Flow", "Status mix", "By program"]) {
+    await page.clickText(label, '[role="group"][aria-label="Explorer view"]');
+    await page.waitFor(
+      `document.querySelector('[data-testid="explorer-chart"] svg.recharts-surface') !== null`,
+      { timeout: 10000 },
+    );
+    check(
+      `explorer: ${label} view draws a chart`,
+      (await page.count('[data-testid="explorer-chart"] svg.recharts-surface')) > 0,
+    );
+  }
+  await page.clickText("Transactions", '[role="group"][aria-label="Explorer view"]');
+  const rows = await page.count('[data-testid="tx-row"]');
+  const unavailable = await page.count('[data-testid="tx-unavailable"]');
+  check(
+    "explorer: transactions view lists devnet signatures",
+    rows > 0 || unavailable === 1,
+    `rows ${rows}`,
+  );
+  if (rows > 0) {
+    const sig = await page.eval(
+      `document.querySelector('[data-testid="tx-row"] a[href*="explorer.solana.com/tx/"]')?.getAttribute("href")`,
+    );
+    check(
+      "explorer: signatures link to Solana Explorer on devnet",
+      typeof sig === "string" && sig.includes("cluster=devnet"),
+    );
+  }
+  await shot(page, "e2e-explorer");
+  check(
+    "explorer: no console errors",
     page.consoleErrors.length === 0,
     page.consoleErrors.join(" | "),
   );
