@@ -490,7 +490,7 @@ await step("issuers", async () => {
     (await page.count('[data-testid="issuer-card"]')) === expected.credentials.length,
   );
   const cards = await page.eval(
-    `[...document.querySelectorAll('[data-testid="issuer-card"]')].map((c) => ({ credential: c.dataset.credential, name: c.querySelector("h2").textContent.trim(), live: c.querySelector('[data-testid="issuer-live"]').dataset.value }))`,
+    `[...document.querySelectorAll('[data-testid="issuer-card"]')].map((c) => ({ credential: c.dataset.credential, name: c.querySelector("h2").textContent.trim(), live: c.querySelector('[data-testid="issuer-live"]').dataset.value, authority: c.dataset.authority }))`,
   );
   for (const card of cards) {
     check(
@@ -504,6 +504,44 @@ await step("issuers", async () => {
       `page ${card.live}`,
     );
   }
+  const first = cards[0];
+  await page.clickText(first.name, '[data-testid="issuer-lookup"]');
+  await page.waitFor(`document.querySelector('[data-testid="credential-summary"]') !== null`, {
+    timeout: 40000,
+  });
+  const summary = await page.eval(
+    `(() => { const e = document.querySelector('[data-testid="credential-summary"]'); return { decoded: Number(e.dataset.decoded), excluded: Number(e.dataset.excluded) }; })()`,
+  );
+  check(
+    `issuers: credential lookup scans every attestation under ${first.credential.slice(0, 8)}… (${live[first.credential]})`,
+    summary.decoded + summary.excluded === live[first.credential],
+    JSON.stringify(summary),
+  );
+  check(
+    "issuers: credential lookup renders the on-chain name",
+    (await page.text('[data-testid="credential-card"]'))?.includes(first.name),
+  );
+  await page.clickText("Authority", '[role="group"][aria-label="Lookup type"]');
+  await page.type("#issuer-address", first.authority);
+  await page.click('[data-testid="issuer-lookup"] form button[type="submit"]');
+  await page.waitFor(`document.querySelector('[data-testid="authority-summary"]') !== null`, {
+    timeout: 40000,
+  });
+  const creds = await page.eval(
+    `[...document.querySelectorAll('[data-testid="credential-card"]')].map((e) => e.dataset.credential)`,
+  );
+  check(
+    "issuers: authority lookup lists the wallet's credential",
+    creds.includes(first.credential),
+    creds.join(","),
+  );
+  await page.type("#issuer-address", "not-an-address");
+  await page.click('[data-testid="issuer-lookup"] form button[type="submit"]');
+  await page.waitFor(`document.querySelector('[role="alert"]') !== null`, { timeout: 15000 });
+  check(
+    "issuers: invalid address shows the validation error",
+    /not a valid/.test(await page.text('[role="alert"]')),
+  );
   await shot(page, "e2e-issuers");
   check(
     "issuers: no console errors",

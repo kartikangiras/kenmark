@@ -73,7 +73,7 @@ const liveFeatures = [
   {
     name: "Dashboard and live lookup",
     detail:
-      "Every published attestation, the issuers, and the validation reports in one place, plus a lookup that runs the aggregator against devnet for any program ID.",
+      "Every published attestation, the issuers, and the validation reports in one place, plus a lookup that runs the aggregator against devnet for any program ID, and an issuer lookup for any SAS credential or wallet.",
   },
   {
     name: "Hosted aggregation API",

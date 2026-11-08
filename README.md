@@ -81,10 +81,11 @@ npm run dev -w @kenmark/web    # http://localhost:3000
 | `/docs` | How the schema, aggregator, and validation fit together, with what is live and what is planned. |
 | `/dashboard` | Overview of every attestation in `validation/`: counts, status split, per-test table and chart, plus a live on-chain count per issuer. |
 | `/dashboard/attestations` | Searchable, sortable table of all published attestations with Explorer links. |
-| `/dashboard/issuers` | The two devnet credentials, with authority and name read live from the chain. |
+| `/dashboard/issuers` | Kenmark's two credentials read live from the chain, plus a lookup for any SAS credential or wallet authority on devnet. |
 | `/dashboard/validation` | The markdown reports from `validation/test-results/`, rendered. |
 | `/dashboard/lookup` | Runs the aggregator for any program ID against devnet. |
 | `/api/lookup?program=<id>` | JSON for the same query. |
+| `/api/issuer?credential=<addr>` or `?authority=<addr>` | A credential account with everything published under it, or the credentials a wallet controls. |
 | `/api/export` | The normalised attestation records as a JSON download. |
 
 The dashboard reads `validation/devnet-attestations.json`, `validation/real-world-attestations.json`,
@@ -103,6 +104,8 @@ npm run dev -w @kenmark/api    # http://localhost:8787
 | `GET /health` | Cluster, RPC host, implemented predicates. |
 | `GET /programs/{programId}/security` | The security profile shape: `verifiedBuild` (latest), `verifiedBuilds` (all), empty sections for predicates not yet implemented, and `rawAttestations` so no consumer has to trust the summary. |
 | `GET /programs/{programId}/attestations` | Every decoded attestation plus records excluded with a reason. |
+| `GET /credentials/{credential}/attestations` | One issuer's credential account and everything published under it. |
+| `GET /authorities/{authority}/credentials` | The credentials a wallet controls as authority. |
 
 Invalid addresses return 400. When the RPC endpoint rate-limits, the API returns 503 with
 `retryable: true` and a `retry-after` header. Responses are cached for 30 seconds per program.
