@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "provider": "node",
+  "steps": {
+    "build": {
+      "commands": ["npm run build --workspace @kenmark/errors --workspace @kenmark/core --workspace @kenmark/api"]
+    }
+  },
+  "deploy": {
+    "startCommand": "npm run start --workspace @kenmark/api"
+  }
+}

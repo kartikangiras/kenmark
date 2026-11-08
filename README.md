@@ -125,8 +125,8 @@ E2E_BASE_URL=http://localhost:3123 npm run test:e2e -w @kenmark/web
 
 - **Web** deploys to Vercel with the project root directory set to `apps/web`; `apps/web/vercel.json`
   builds the workspace packages first.
-- **API** deploys to Railway from the repository root; `railway.toml` builds `@kenmark/api` and
-  starts it with a `/health` check. The service listens on `PORT`.
+- **API** deploys to Railway from the repository root; `railpack.json` builds `@kenmark/api` and
+  starts it. The service listens on `PORT` and answers `/health`.
 - Set `KENMARK_RPC_URL` on both to a dedicated devnet endpoint.
 
 ## License
