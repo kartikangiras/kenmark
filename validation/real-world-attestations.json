@@ -1,0 +1,59 @@
+[
+  {
+    "subject": "Phoenix",
+    "programId": "PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY",
+    "attestationAddress": "BU1guCEZSPZk5zEKyDQCkRqWYC2T3J5xEf5zHYm42b5U",
+    "publishSignature": "UooDpgPM3YC1LmpPdmuWV22cECzgPhZiqG2EWZhm15gN7ts83758E5HPj2Be9Wwbvn1PCeyLUt6xDhAjvCZ5kvt",
+    "osecSnapshot": {
+      "is_verified": true,
+      "message": "On chain program verified",
+      "on_chain_hash": "6877a5b732b3494b828a324ec846d526d962223959534dbaf4209e0da3b2d6a9",
+      "executable_hash": "6877a5b732b3494b828a324ec846d526d962223959534dbaf4209e0da3b2d6a9",
+      "repo_url": "https://github.com/Ellipsis-Labs/phoenix-v1",
+      "commit": "None",
+      "last_verified_at": "2024-12-12T13:23:28.496764",
+      "is_frozen": false,
+      "is_closed": false
+    },
+    "derivedStatus": "Verified",
+    "decodedRoundTrip": true
+  },
+  {
+    "subject": "Marinade",
+    "programId": "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD",
+    "attestationAddress": "7FRimcGb8HLQSiTBodQgzwaydxNxioXWoa5zLf8vfmyZ",
+    "publishSignature": "5c8BQRCjvE6SCAwGQMGFMPYf1enSYv6AdXVTNuWQaYaBJ2xRsi9DYzezWwQYDQW1f2a1k2ZgnqAnNFLVCY2gykc5",
+    "osecSnapshot": {
+      "is_verified": false,
+      "message": "On chain program not verified",
+      "on_chain_hash": "db89efca1670f85397f978e9a02f6c2806a9adaa17ebb5783e7e99eddcb26be3",
+      "executable_hash": "daeb88a604e11a83382fd2e318abb99e455fd02a2b612227e61e0bb7b5568ab7",
+      "repo_url": "https://github.com/marinade-finance/liquid-staking-program",
+      "commit": "",
+      "last_verified_at": "2024-01-26T07:53:47.286115",
+      "is_frozen": false,
+      "is_closed": false
+    },
+    "derivedStatus": "Mismatch",
+    "decodedRoundTrip": true
+  },
+  {
+    "subject": "Kamino",
+    "programId": "KaminoLendkCC8gK7iCK6oCEQaefsUEC1BeXKcm5cVc",
+    "attestationAddress": "C2YEENZKPhsMaTE6zAwxqSn2WgzsR5QUW87GnHW5T5WC",
+    "publishSignature": "3GhwxA8U1ui45nDGmT49kkM7VrNbv1nKiahiN1A5WA3X4aCgso72wn4LFLG3eR9z2qaQ7uE4Xk1r9Z5e7r6hLjL2",
+    "osecSnapshot": {
+      "is_verified": false,
+      "message": "On chain program not verified",
+      "on_chain_hash": "",
+      "executable_hash": "",
+      "repo_url": "",
+      "commit": "",
+      "last_verified_at": null,
+      "is_frozen": false,
+      "is_closed": false
+    },
+    "derivedStatus": "Unknown",
+    "decodedRoundTrip": true
+  }
+]
