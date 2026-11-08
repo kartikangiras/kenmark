@@ -15,6 +15,7 @@ SAS credentials. Kenmark does not score programs and does not decide who may att
 
 - Dashboard and docs: <https://kenmark-sigma.vercel.app>
 - Lookup API on the same deployment: <https://kenmark-sigma.vercel.app/api/lookup?program=PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY>
+- Hosted aggregation API: <https://kenmark-api-production.up.railway.app/programs/PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY/security>
 
 ## What exists today
 

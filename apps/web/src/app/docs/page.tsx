@@ -156,6 +156,11 @@ const roadmap = [
 const references = [
   { name: "GitHub repository", desc: "All source, MIT licensed", href: GITHUB_URL },
   {
+    name: "Hosted API",
+    desc: "GET /programs/{programId}/security against devnet",
+    href: `${API_URL}/health`,
+  },
+  {
     name: "Validation artifact",
     desc: "The re-runnable devnet evidence behind every claim on this page",
     href: VALIDATION_URL,

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GITHUB_URL, SAS_URL, VALIDATION_URL } from "@/lib/site";
+import { API_URL, GITHUB_URL, SAS_URL, VALIDATION_URL } from "@/lib/site";
 
 export function LandingFooter() {
   return (
@@ -19,6 +19,14 @@ export function LandingFooter() {
           className="hover:text-white"
         >
           Validation artifact
+        </a>
+        <a
+          href={`${API_URL}/health`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-white"
+        >
+          API
         </a>
         <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="hover:text-white">
           GitHub
