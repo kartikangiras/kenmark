@@ -48,7 +48,13 @@ function Inner() {
       {mode === "program" ? (
         <LookupPanel initialProgram={params.get("program") ?? ""} />
       ) : (
-        <IssuerLookup presets={PRESETS} basePath="/dashboard/verify" initialMode={mode} />
+        <IssuerLookup
+          key={mode}
+          presets={PRESETS}
+          basePath="/dashboard/verify"
+          initialMode={mode}
+          hideModeToggle
+        />
       )}
     </div>
   );

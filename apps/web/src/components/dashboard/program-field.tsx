@@ -1,19 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Pills } from "./ui";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowRight } from "lucide-react";
 import { cn, truncateAddress } from "@/lib/utils";
 import type { AttestationRecord } from "@/lib/dashboard/records";
 
-export const PRESETS = [
-  { label: "Phoenix", programId: "PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY" },
-  { label: "Marinade", programId: "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD" },
-  { label: "Kamino", programId: "KaminoLendkCC8gK7iCK6oCEQaefsUEC1BeXKcm5cVc" },
-  { label: "SPL Token", programId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" },
-] as const;
+export { PRESETS } from "./verify-bar";
 
 /** Deterministic position from a programId so the layout is stable between renders. */
 function place(hex: string): { x: number; y: number } {
@@ -68,16 +58,7 @@ const STATUS_FILL: Record<AttestationRecord["status"], string> = {
  * real mainnet programs. The search box on top runs the live aggregator.
  */
 export function ProgramField({ records }: { records: AttestationRecord[] }) {
-  const router = useRouter();
-  const [value, setValue] = useState("");
-  const [mode, setMode] = useState<"program" | "credential" | "authority">("program");
   const items = pins(records);
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const id = value.trim();
-    if (id) router.push(`/dashboard/verify?${mode}=${encodeURIComponent(id)}`);
-  };
 
   return (
     <div
@@ -106,67 +87,9 @@ export function ProgramField({ records }: { records: AttestationRecord[] }) {
         ))}
       </svg>
 
-      <div className="relative z-10 flex flex-col gap-3 p-4 sm:p-6">
-        <form onSubmit={submit} className="flex flex-col gap-2 sm:flex-row">
-          <div className="rounded-full bg-db-black p-1 self-start sm:self-auto">
-            <Pills
-              options={[
-                { value: "program", label: "Program" },
-                { value: "credential", label: "Credential" },
-                { value: "authority", label: "Wallet" },
-              ]}
-              value={mode}
-              onChange={setMode}
-              label="What to verify"
-            />
-          </div>
-          <label htmlFor="field-program" className="sr-only">
-            Program ID
-          </label>
-          <input
-            id="field-program"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder={
-              mode === "program"
-                ? "Paste a program ID to verify on devnet"
-                : mode === "credential"
-                  ? "Paste your SAS credential address"
-                  : "Paste your wallet address"
-            }
-            spellCheck={false}
-            autoComplete="off"
-            className="h-12 flex-1 rounded-full border border-db-border bg-db-chip px-5 font-mono text-sm text-db-fg placeholder:text-db-muted outline-none focus-visible:ring-2 focus-visible:ring-db-accent/50"
-          />
-          <button
-            type="submit"
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-db-accent px-5 text-sm text-white transition-colors hover:bg-db-accent/90 outline-none focus-visible:ring-2 focus-visible:ring-db-accent/60"
-          >
-            Verify
-            <ArrowRight className="h-4 w-4" />
-          </button>
-        </form>
-
-        <div className="flex flex-wrap gap-2">
-          {PRESETS.map((p) => (
-            <button
-              key={p.programId}
-              type="button"
-              onClick={() => router.push(`/dashboard/verify?program=${p.programId}`)}
-              className="rounded-full border border-db-border bg-db-chip px-3 py-1 text-xs text-db-fg/80 transition-colors hover:text-db-fg outline-none focus-visible:ring-2 focus-visible:ring-db-accent/50"
-            >
-              {p.label}
-            </button>
-          ))}
-          <Link
-            href="/dashboard/verify?mode=credential"
-            className="rounded-full border border-db-accent/40 bg-db-chip px-3 py-1 text-xs text-db-accent transition-colors hover:bg-db-accent/10 outline-none focus-visible:ring-2 focus-visible:ring-db-accent/50"
-          >
-            Check your own credential →
-          </Link>
-        </div>
-      </div>
-
+      <p className="relative z-10 px-4 pt-4 text-sm text-db-muted sm:px-6 sm:pt-6">
+        Programs with attestations on devnet. Named pins are real mainnet programs.
+      </p>
       <div className="relative min-h-[280px] flex-1">
         {items.map((pin) => (
           <div

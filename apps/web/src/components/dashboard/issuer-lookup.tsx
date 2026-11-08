@@ -37,10 +37,12 @@ function Inner({
   presets,
   basePath,
   initialMode,
+  hideModeToggle,
 }: {
   presets: IssuerPreset[];
   basePath: string;
   initialMode?: Mode;
+  hideModeToggle?: boolean;
 }) {
   const router = useRouter();
   const params = useSearchParams();
@@ -102,14 +104,22 @@ function Inner({
   return (
     <div id="lookup" className="grid gap-4 xl:grid-cols-[380px_1fr]" data-testid="issuer-lookup">
       <Card className="self-start">
-        <CardTitle className="mb-2">Check your own issuer</CardTitle>
+        <CardTitle className="mb-2">
+          {hideModeToggle
+            ? mode === "credential"
+              ? "Your credential"
+              : "Your wallet"
+            : "Check your own issuer"}
+        </CardTitle>
         <p className="mb-6 text-sm text-db-card-muted">
           Any Solana Attestation Service credential on devnet, not only Kenmark&apos;s. Paste a
           credential to see the account and everything published under it, or a wallet to list the
           credentials it controls.
         </p>
         <form onSubmit={submit} className="flex flex-col gap-3">
-          <Pills options={MODES} value={mode} onChange={setMode} label="Lookup type" />
+          {!hideModeToggle && (
+            <Pills options={MODES} value={mode} onChange={setMode} label="Lookup type" />
+          )}
           <label htmlFor="issuer-address" className="text-sm text-db-card-muted">
             {mode === "credential" ? "Credential address" : "Authority (wallet) address"}
           </label>
@@ -398,14 +408,21 @@ export function IssuerLookup({
   presets,
   basePath = "/dashboard/issuers",
   initialMode,
+  hideModeToggle = false,
 }: {
   presets: IssuerPreset[];
   basePath?: string;
   initialMode?: "credential" | "authority";
+  hideModeToggle?: boolean;
 }) {
   return (
     <Suspense fallback={null}>
-      <Inner presets={presets} basePath={basePath} initialMode={initialMode} />
+      <Inner
+        presets={presets}
+        basePath={basePath}
+        initialMode={initialMode}
+        hideModeToggle={hideModeToggle}
+      />
     </Suspense>
   );
 }
