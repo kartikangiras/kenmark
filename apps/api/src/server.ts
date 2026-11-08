@@ -5,16 +5,21 @@
  *   GET /health
  *   GET /programs/:programId/security      profile shape from the spec, one predicate populated
  *   GET /programs/:programId/attestations  every decoded attestation plus exclusions
+ *   GET /credentials/:credential/attestations  one issuer's credential account and everything under it
+ *   GET /authorities/:authority/credentials    the credentials a wallet controls
  */
 import { serve } from "@hono/node-server";
 import { Hono, type Context } from "hono";
 import { cors } from "hono/cors";
 import { address, getBase58Decoder, type Address } from "@solana/kit";
+import { fetchAllMaybeCredential } from "sas-lib";
 import {
   createRpcClient,
   isRateLimitError,
   loadConfig,
+  queryAttestationsForCredential,
   queryAttestationsForProgram,
+  queryCredentialsForAuthority,
   resolveAndDecode,
   verifiedBuild,
   withRateLimitBackoff,
@@ -149,7 +154,13 @@ app.get("/", (c) =>
   c.json({
     name: "kenmark-api",
     cluster: "devnet",
-    routes: ["/health", "/programs/:programId/security", "/programs/:programId/attestations"],
+    routes: [
+      "/health",
+      "/programs/:programId/security",
+      "/programs/:programId/attestations",
+      "/credentials/:credential/attestations",
+      "/authorities/:authority/credentials",
+    ],
     source: "https://github.com/kartikangiras/kenmark",
   }),
 );
@@ -157,6 +168,75 @@ app.get("/", (c) =>
 app.get("/health", (c) =>
   c.json({ ok: true, cluster: "devnet", rpcHost, predicates: IMPLEMENTED_PREDICATES }),
 );
+
+function credentialView(a: Awaited<ReturnType<typeof fetchAllMaybeCredential>>[number]) {
+  return {
+    credential: a.address,
+    exists: a.exists,
+    authority: a.exists ? a.data.authority : null,
+    name: a.exists ? new TextDecoder().decode(new Uint8Array(a.data.name)) : null,
+    authorizedSigners: a.exists ? [...a.data.authorizedSigners] : [],
+  };
+}
+
+function toView(
+  d: Awaited<ReturnType<typeof resolveAndDecode>>["decoded"][number],
+): AttestationView {
+  const base58 = getBase58Decoder();
+  return {
+    attestation: d.attestationAddress,
+    predicateType: d.predicateType,
+    schemaVersion: d.schemaVersion,
+    issuer: { credential: d.issuer.credential, authority: d.issuer.authority },
+    fields: {
+      programId: base58.decode(d.fields.programId),
+      binaryHash: Buffer.from(d.fields.binaryHash).toString("hex"),
+      sourceCommit: d.fields.sourceCommit,
+      verificationStatus: verifiedBuild.verificationStatusName(d.fields.verificationStatus),
+      verificationTimestamp: Number(d.fields.verificationTimestamp),
+    },
+  };
+}
+
+app.get("/credentials/:credential/attestations", async (c) => {
+  const credential = parseProgramId(c.req.param("credential"));
+  if (!credential) return c.json({ error: "credential is not a valid base58 address." }, 400);
+  try {
+    const { account, decoded, excluded } = await withRateLimitBackoff(async () => {
+      const [account] = await withRetry(() => fetchAllMaybeCredential(rpc, [credential]), {
+        rpcUrl: config.rpcUrl,
+      });
+      const records = await queryAttestationsForCredential(rpc, config.rpcUrl, credential);
+      return { account, ...(await resolveAndDecode(rpc, config.rpcUrl, records)) };
+    });
+    return c.json({
+      credential: credentialView(account),
+      cluster: "devnet",
+      decoded: decoded.map(toView),
+      excluded: excluded.map((e) => ({ attestation: e.attestationAddress, reason: e.reason })),
+    });
+  } catch (err) {
+    return failure(c, err);
+  }
+});
+
+app.get("/authorities/:authority/credentials", async (c) => {
+  const authority = parseProgramId(c.req.param("authority"));
+  if (!authority) return c.json({ error: "authority is not a valid base58 address." }, 400);
+  try {
+    const credentials = await withRateLimitBackoff(async () => {
+      const addresses = await queryCredentialsForAuthority(rpc, config.rpcUrl, authority);
+      if (addresses.length === 0) return [];
+      const accounts = await withRetry(() => fetchAllMaybeCredential(rpc, addresses), {
+        rpcUrl: config.rpcUrl,
+      });
+      return accounts.map(credentialView);
+    });
+    return c.json({ authority, cluster: "devnet", credentials });
+  } catch (err) {
+    return failure(c, err);
+  }
+});
 
 function parseProgramId(raw: string): Address | null {
   try {
